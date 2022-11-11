@@ -13,6 +13,7 @@ export const API_END_POINT = {
   // product related api
   get_products_main_category: `${BASE_URL}products`,
   get_products_category: `${BASE_URL}products_category/`,
-  addcart: `${BASE_URL}addcart`,
-  getorder: `${BASE_URL}getorder`,
+  addcart: `${BASE_URL}user/addcart`,
+  getorder: `${BASE_URL}user/getorder`,
+  wallet: `${BASE_URL}user/wallet1`,
 };

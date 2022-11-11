@@ -149,7 +149,6 @@ export default function CustomDrawer(props) {
         if (result.data.response) {
           // ShowMessage("" + result.data.message);
           setState(result.data.data);
-          console.log("user data --<<<<<", result);
         } else {
           ShowMessage("" + result.data.message);
         }
@@ -234,7 +233,7 @@ export default function CustomDrawer(props) {
                 borderRadius: horizScale(35),
                 resizeMode: "cover",
               }}
-              source={{ uri: state.profile }}
+              source={CustomImage.user}
             />
 
             <View style={{ marginLeft: horizScale(20) }}>

@@ -34,7 +34,7 @@ import { ShowMessage } from "../../../utils/ShowMessage";
 import Loader from "../../../utils/Loader";
 
 const EditProfile = ({ navigation }) => {
-  const [profileImage, setprofileImage] = useState("");
+  const [profileImage, setprofileImage] = useState({});
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState(null);
   const [email, setEmail] = useState("");
@@ -52,7 +52,7 @@ const EditProfile = ({ navigation }) => {
       quality: 1,
     });
 
-    setprofileImage(result.uri);
+    setprofileImage(result);
   };
 
   const imageGalleryLaunch = async () => {
@@ -171,9 +171,14 @@ const EditProfile = ({ navigation }) => {
       name: name,
       email: email,
       address: first,
-      photo: "fb",
+      photo: {
+        name: profileImage.name,
+        type: profileImage.type,
+        uri: profileImage.uri,
+      },
     };
-    ApiCall("post", data, url)
+    let headers = { "Content-Type": "multipart/form-data" };
+    ApiCall("post", data, url, headers)
       .then((result) => {
         if (result.data.response) {
           ShowMessage("Profile updated successfully");

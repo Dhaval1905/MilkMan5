@@ -103,6 +103,7 @@ const Orders = ({ navigation }) => {
   useEffect(() => {
     getUserFromStorage();
   }, []);
+
   const [user, setUser] = useState("");
 
   const getUserFromStorage = async () => {
@@ -131,31 +132,36 @@ const Orders = ({ navigation }) => {
   };
 
   const getOrders = (id) => {
-    ApiCall("get", null, API_END_POINT.getorder + "235")
-      .then((response) => {
-        // console.log(
-        //   "get order list api red => ",
-        //   JSON.stringify(response.data.data[0])
-        // );
+    // ApiCall("post", null, API_END_POINT.getorder + "263")
+    //   .then((response) => {
+    //     // console.log(
+    //     //   "get order list api red => ",
+    //     //   JSON.stringify(response.data.data[0])
+    //     // );
+    //     console.log("<><><><><><><>", response);
+    //     if (response.data?.response) {
+    //       //   setImageUrl(response?.data?.img);
+    //       setOrder(response?.data?.data);
+    //     } else {
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.log("get product list api error => ", error);
+    //   });
 
-        if (response.data?.response) {
-          //   setImageUrl(response?.data?.img);
-          setOrder(response?.data?.data);
-        } else {
-        }
-      })
-      .catch((error) => {
-        console.log("get product list api error => ", error);
-      });
+    let formdata = new FormData();
+    formdata.append("id", "263");
+    let requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow",
+    };
+    fetch(API_END_POINT.getorder, requestOptions)
+      .then((response) => response.json())
+      .then((result) => setOrder(result.data))
+      .catch((error) => console.log("error", error));
   };
-  /**
-   * {"id":51,"prod_name":"33","dtype":"delivery","delivery_date":"2022-08-11","order_time":null,
-   * "plan":"daily","plan_type":"A","delivery_status":0,"return_bottle":0,"bottle_penalty":"0",
-   * "prod_price":"99.00","price":"198","total_price":238,"quantity":"2","wallet_balance":238,
-   * "customer_action":"OK","reason":"OK","delivery_id":14,"pmode":"cod","customer_id":235,
-   * "created_at":"2022-08-09 00:00:00","updated_at":"2022-08-09 06:37:39","status":0,
-   * "hub":2,"track_id":null,"cname":null,"days":"2","to_date":"2022-08-13","penalty_status":null}
-   */
+
   return (
     <SafeAreaView style={GloableStyle.container}>
       <StatusBar backgroundColor={Color.greendark} barStyle="light-content" />
@@ -245,7 +251,7 @@ const Orders = ({ navigation }) => {
                       textDecorationLine: "underline",
                     }}
                   >
-                    {item.prod_name}
+                    {item.pname}
                   </Text>
                   <Text style={GloableStyle.headingText}>
                     Price : ₹{item.price}
@@ -262,16 +268,16 @@ const Orders = ({ navigation }) => {
                     Quantity : {item.quantity} {item.quantityType}
                   </Text>
                   <Text style={GloableStyle.simpleText}>
-                    {item.status == "active" ? "Start from :" : "Order on :"}{" "}
+                    {item.status == "Active" ? "Start from :" : "Order on :"}{" "}
                     {item.delivery_date}
                   </Text>
                 </View>
                 <TouchableOpacity
                   style={{
                     backgroundColor:
-                      item.status == "active"
+                      item.status == "Active"
                         ? Color.green1
-                        : item.status == "pending"
+                        : item.status == "Pending"
                         ? Color.yellow
                         : Color.red,
                     flex: 0.25,
@@ -280,7 +286,7 @@ const Orders = ({ navigation }) => {
                     borderRadius: horizScale(8),
                   }}
                   onPress={() => {
-                    if (item.status == "active") {
+                    if (item.status == "Active") {
                       navigation.navigate("ActivePlan", { item: item });
                     } else {
                       navigation.navigate("SubProduct", {

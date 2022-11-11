@@ -19,6 +19,10 @@ import CalendarStrip from "react-native-calendar-strip";
 import Carousel from "react-native-snap-carousel";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_END_POINT } from "../../utils/ApiEndPoint";
+import ApiCall from "../../utils/ApiCall";
+
 export default function Home({ navigation }) {
   const [wallet, setWallet] = useState(200.11);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -103,9 +107,9 @@ export default function Home({ navigation }) {
   ]);
 
   const [imageUrl, setImageUrl] = useState("");
-
   const [recommended, setRecommended] = useState([]);
   const [trending, setTrending] = useState([]);
+  const [state, setState] = useState({});
 
   const getRecommendedProduct = () => {
     axios
@@ -180,10 +184,59 @@ export default function Home({ navigation }) {
       .finally(() => {});
   };
 
+  const getUserProfile = (id) => {
+    const url = API_END_POINT.get_profile;
+    ApiCall("get", null, url + id)
+      .then((result) => {
+        // console.log("userData menu screen", JSON.stringify(result.data));
+        if (result.data.response) {
+          // ShowMessage("" + result.data.message);
+          setState(result.data.data);
+        } else {
+          ShowMessage("" + result.data.message);
+        }
+        // console.log(result.data);
+      })
+      .catch((err) => {
+        console.log("ERROR IN SIGN UP API MENU => ", err);
+
+        Platform.OS === "android"
+          ? ToastAndroid.showWithGravity(
+              "Something went wrong",
+              ToastAndroid.SHORT,
+              ToastAndroid.BOTTOM
+            )
+          : null;
+      })
+      .finally(() => {});
+  };
+
+  const getUserFromStorage = async () => {
+    try {
+      await AsyncStorage.getItem("userId", (error, value) => {
+        if (error) {
+          console.log(
+            "Error in if condition getting user from async storage -> ",
+            error
+          );
+        } else {
+          if (value !== null) {
+            getUserProfile(value);
+          } else {
+            // navigation.replace('login');
+          }
+        }
+      });
+    } catch (error) {
+      console.log("Error in get user on splash -> ", error);
+    }
+  };
+
   useEffect(() => {
     getRecommendedProduct();
     getTrendingProduct();
     getReferEarn();
+    getUserFromStorage();
   }, []);
 
   const renderCarouselItem = ({ item }) => {
@@ -279,7 +332,7 @@ export default function Home({ navigation }) {
           alignSelf: "center",
         }}
       >
-        Welcome Ravindra Kumar
+        Welcome {state.uname}
       </Text>
 
       <ScrollView>

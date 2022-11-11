@@ -51,7 +51,6 @@ const ViewProfile = ({ navigation }) => {
           if (value !== null) {
             setUser(value);
             getUserProfile(value);
-
             // getData(value);
             // navigation.replace('home');
           } else {
@@ -132,12 +131,7 @@ const ViewProfile = ({ navigation }) => {
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ ...GloableStyle.profileView, flex: 0.2 }}>
-          <Image
-            style={GloableStyle.profileImage}
-            source={{
-              uri: "https://indianmodels.in/tim/timthumb.php?src=/images/im_1572351570_IMG-20191021-WA0022.jpg&w=640&h=480&zc=1&cc=",
-            }}
-          />
+          <Image style={GloableStyle.profileImage} source={CustomImage.user} />
           <Text
             style={[GloableStyle.headingText, { marginLeft: 0, fontSize: 18 }]}
           >

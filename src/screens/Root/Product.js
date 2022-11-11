@@ -41,9 +41,6 @@ export default function Product({ navigation }) {
       });
   };
 
-
-
-
   const [imageUrl, setImageUrl] = useState("");
 
   const [productList, setProductList] = useState([
@@ -76,11 +73,12 @@ export default function Product({ navigation }) {
     //   sname: "Milk Products",
     // },
   ]);
+
   const [order, setOrder] = useState([
     {
       id: 3,
       orderId: 100035,
-      itemname: "Saboro Milk",
+      itemname: "Saboroo Milk",
       price: "35",
       image: "https://whitespreadfoods.com/images/varient1-L.png",
       quantity: "1",
@@ -127,6 +125,7 @@ export default function Product({ navigation }) {
       ],
     },
   ]);
+
   return (
     <SafeAreaView style={GloableStyle.container}>
       <View

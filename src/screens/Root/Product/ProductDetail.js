@@ -86,10 +86,17 @@ const ProductDetail = ({ navigation, route }) => {
 
   const add_to_cart = () => {
     let data = {
-      plantype: "A",
-      product_name: `["Milk","lassi","Dahi"]`,
-      price: "250",
-      quantity: "10",
+      uid: "235",
+      date: "2022-11-22",
+      quantity: "2",
+      prod_id: "41",
+      plan1: "daily",
+      plan2: "A",
+      days: "2",
+      // plantype: "A",
+      // product_name: `["Milk","lassi","Dahi"]`,
+      // price: "250",
+      // quantity: "10",
     };
 
     ApiCall("post", data, API_END_POINT.addcart)
