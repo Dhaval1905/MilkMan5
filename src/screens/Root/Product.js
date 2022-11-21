@@ -13,22 +13,26 @@ import { fontSize } from "../../constants/Fontsize";
 import { horizScale } from "../../constants/Layout";
 import ApiCall from "../../utils/ApiCall";
 import { API_END_POINT } from "../../utils/ApiEndPoint";
+import Loader from "../../utils/Loader";
 import { GloableStyle } from "../GloableStyle";
 
 export default function Product({ navigation }) {
   const [currentOption, setCurrentOption] = useState("Products");
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     getProducts();
   }, []);
 
   const getProducts = () => {
+    setLoader(true);
     ApiCall("get", null, API_END_POINT.get_products_main_category)
       .then((response) => {
         // console.log(
         //   "get product list api red => ",
         //   JSON.stringify(response.data)
         // );
+        setLoader(false);
 
         if (response.data?.response) {
           setImageUrl(response?.data?.img);
@@ -38,6 +42,10 @@ export default function Product({ navigation }) {
       })
       .catch((error) => {
         console.log("get product list api error => ", error);
+        setLoader(false);
+      })
+      .finally(() => {
+        setLoader(false);
       });
   };
 
@@ -128,6 +136,7 @@ export default function Product({ navigation }) {
 
   return (
     <SafeAreaView style={GloableStyle.container}>
+      <Loader loading={loader} />
       <View
         style={{ ...GloableStyle.headerView, backgroundColor: Color.green3 }}
       >
@@ -151,25 +160,27 @@ export default function Product({ navigation }) {
             <View style={GloableStyle.horzlinehalf} />
           )}
         </TouchableOpacity>
-        <TouchableOpacity
-          style={{ width: horizScale(130) }}
-          onPress={() => {
-            setCurrentOption("MySub");
-          }}
-        >
-          <Text
-            style={{
-              textAlign: "center",
-              fontWeight: "700",
-              color: currentOption == "MySub" ? Color.green1 : Color.black,
-            }}
-          >
-            My Subscription
-          </Text>
-          {currentOption == "MySub" && (
-            <View style={GloableStyle.horzlinehalf} />
-          )}
-        </TouchableOpacity>
+        {
+          //  <TouchableOpacity
+          //   style={{ width: horizScale(130) }}
+          //   onPress={() => {
+          //     setCurrentOption("MySub");
+          //   }}
+          // >
+          //   <Text
+          //     style={{
+          //       textAlign: "center",
+          //       fontWeight: "700",
+          //       color: currentOption == "MySub" ? Color.green1 : Color.black,
+          //     }}
+          //   >
+          //     My Subscription
+          //   </Text>
+          //   {currentOption == "MySub" && (
+          //     <View style={GloableStyle.horzlinehalf} />
+          //   )}
+          // </TouchableOpacity>
+        }
       </View>
       {currentOption == "Products" && (
         <FlatList
@@ -192,7 +203,7 @@ export default function Product({ navigation }) {
                 style={styles.flexcontainer}
               >
                 <Image
-                  source={{ uri: imageUrl + item.image }}
+                  source={{ uri: item.image }}
                   style={{
                     height: horizScale(150),
                     width: "95%",

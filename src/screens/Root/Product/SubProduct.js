@@ -15,16 +15,18 @@ import { Color } from "../../../constants/Colors";
 import { fontSize } from "../../../constants/Fontsize";
 import { API_END_POINT } from "../../../utils/ApiEndPoint";
 import ApiCall from "../../../utils/ApiCall";
+import Loader from "../../../utils/Loader";
 const SubProduct = ({ navigation, route }) => {
   const { id, name } = route.params;
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     getCategoryProducts();
   }, []);
 
   const getCategoryProducts = () => {
+    setLoader(true);
     // console.log("ApI uRL => ", `${API_END_POINT.get_products_category}/${id}`);
-
     ApiCall("get", null, API_END_POINT.get_products_category + id + "")
       // ApiCall(
       //   "get",
@@ -32,6 +34,7 @@ const SubProduct = ({ navigation, route }) => {
       //   `https://rajivalse.co.in/Milk_Man/api/products_category/8`
       // )
       .then((response) => {
+        setLoader(false);
         if (response.data?.response) {
           //   console.log(
           //     "ApI uRL => ",
@@ -47,6 +50,10 @@ const SubProduct = ({ navigation, route }) => {
       })
       .catch((error) => {
         console.log("get product list api error => ", error);
+        setLoader(false);
+      })
+      .finally(() => {
+        setLoader(false);
       });
   };
 
@@ -141,6 +148,7 @@ const SubProduct = ({ navigation, route }) => {
   ]);
   return (
     <SafeAreaView style={GloableStyle.container}>
+      <Loader loading={loader} />
       <TouchableOpacity
         onPress={() => {
           navigation.goBack();

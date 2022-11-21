@@ -23,19 +23,20 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const OtpVerify = ({ navigation, route }) => {
   const [code, setCode] = useState("");
-
   const [receivedOtp, setReceivedOtp] = useState("");
   const [receivedData, setReceivedData] = useState({});
   const [intentFromSignup, setIntentFromSignup] = useState("");
 
   useEffect(() => {
     let { data } = route.params;
+    const data1 = data;
+    // console.log("this came from route", anuj.address);
     let { intentFromSignup } = route.params;
     let { otp } = route.params;
 
     setIntentFromSignup(intentFromSignup);
     setReceivedOtp(otp + "");
-    setReceivedData(data);
+    setReceivedData(data1);
     // console.log(
     //   "RECEIVED DATA -> ",
     //   JSON.stringify(data) +
@@ -63,8 +64,12 @@ const OtpVerify = ({ navigation, route }) => {
       data.append("username", receivedData?.username);
       data.append("email", receivedData?.email);
       data.append("mobile", receivedData?.mobile);
-      data.append("password", receivedData?.newPassword);
+      data.append("password", receivedData?.password);
       data.append("fcmtoken", receivedData?.fcmtoken);
+      data.append("city_id", receivedData?.city_id);
+      data.append("region_id", receivedData?.region_id);
+      data.append("area_id", receivedData?.area_id);
+      data.append("address", receivedData?.address);
 
       setLoader(true);
 
@@ -72,12 +77,18 @@ const OtpVerify = ({ navigation, route }) => {
         username: receivedData?.username,
         email: receivedData?.email,
         mobile: receivedData?.mobile,
-        password: receivedData?.newPassword,
+        password: receivedData?.password,
         fcmtoken: receivedData?.fcmtoken,
+        city_id: receivedData?.city_id,
+        region_id: receivedData?.region_id,
+        area_id: receivedData?.area_id,
+        address: receivedData?.address,
       };
 
+      console.log("data api se pehle", body);
       ApiCall("post", body, url)
         .then((result) => {
+          console.log("", result);
           if (result.data.response) {
             ShowMessage("" + result.data.message);
             AsyncStorage.setItem("userData", JSON.stringify(result.data.data));

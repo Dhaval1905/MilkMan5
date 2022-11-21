@@ -16,7 +16,6 @@ import { Image } from "react-native";
 import Login from "../screens/Auth/Login";
 import OtpVerify from "../screens/Auth/OtpVerify";
 import Signup from "../screens/Auth/Signup";
-
 import Splash from "../screens/Auth/Splash";
 
 export default function Navigation() {

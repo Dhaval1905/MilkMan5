@@ -1,5 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   TextInput,
@@ -11,7 +11,8 @@ import {
   StatusBar,
   ToastAndroid,
   SafeAreaView,
-  KeyboardAvoidingView,
+  Modal,
+  FlatList,
 } from "react-native";
 import { Color } from "../../constants/Colors";
 import { fontSize } from "../../constants/Fontsize";
@@ -22,14 +23,34 @@ import { Ionicons } from "@expo/vector-icons";
 import { API_END_POINT } from "../../utils/ApiEndPoint";
 import ApiCall from "../../utils/ApiCall";
 import { ShowMessage } from "../../utils/ShowMessage";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from "../../utils/Loader";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+
 function Signup({ navigation }) {
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState(null);
   const [email, setEmail] = useState("");
+  const [userAddress, setUserAddress] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [city, setCity] = useState("");
+  const [region, setRegion] = useState("");
+  const [area, setArea] = useState("");
+
+  const [cityData, setCityData] = useState([]);
+  const [regionData, setRegionData] = useState([]);
+  const [areaData, setAreaData] = useState([]);
+
+  const [showCityModal, setShowCityModal] = useState(false);
+  const [showRegionModal, setShowRegionModal] = useState(false);
+  const [showAreaModal, setShowAreaModal] = useState(false);
+
+  const [cityId, setCityId] = useState(null);
+  const [regionId, setRegionId] = useState(null);
+  const [areaId, setAreaId] = useState(null);
+
   const [loader, setLoader] = useState(false);
 
   const signup = () => {
@@ -38,12 +59,21 @@ function Signup({ navigation }) {
     setLoader(true);
 
     const body = {
-      mobile: mobile,
+      mobile: mobile, //below added by anuj
+      // username: name,
+      // email: email,
+      // address: userAddress,
+      // password: newPassword,
+      // fcmtoken: "FCM_TOKEN",
+      // city_id: cityId,
+      // region_id: regionId,
+      // area_id: areaId,
     };
 
     ApiCall("post", body, url)
       .then((result) => {
         if (result.data.response) {
+          AsyncStorage.setItem("userId", result.data.id);
           ShowMessage("" + result.data.message);
           navigation.navigate("OtpVerify", {
             data: {
@@ -52,6 +82,10 @@ function Signup({ navigation }) {
               mobile: mobile,
               password: newPassword,
               fcmtoken: "FCM_TOKEN",
+              city_id: cityId,
+              region_id: regionId,
+              area_id: areaId,
+              address: userAddress,
             },
             intentFromSignup: true,
             otp: result.data?.data + "",
@@ -65,6 +99,10 @@ function Signup({ navigation }) {
               mobile: mobile,
               password: newPassword,
               fcmtoken: "FCM_TOKEN",
+              city_id: cityId,
+              region_id: regionId,
+              area_id: areaId,
+              address: userAddress,
             },
             intentFromSignup: true,
             otp: result.data?.data + "",
@@ -86,6 +124,68 @@ function Signup({ navigation }) {
         setLoader(false);
       });
   };
+
+  const getCityApi = () => {
+    const url = API_END_POINT.getCityApi;
+    // let formdata = new FormData();
+    let requestOptions = {
+      method: "POST",
+      // body: formdata,
+      redirect: "follow",
+    };
+    fetch(url, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        setCityData(result.data);
+        // console.log(result);
+      })
+      .catch((error) => console.log("error", error));
+  };
+
+  const getRegionApi = (id) => {
+    const url = API_END_POINT.getRegionApi;
+    let formdata = new FormData();
+    formdata.append("id", id);
+
+    let requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow",
+    };
+
+    fetch(url, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        // console.log(result);
+        setRegionData(result.data);
+      })
+      .catch((error) => console.log("error", error));
+  };
+
+  const getAreaApi = (id) => {
+    const url = API_END_POINT.getAreaApi;
+    let formdata = new FormData();
+    formdata.append("id", id);
+
+    let requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow",
+    };
+
+    fetch(url, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        // console.log(result);
+        setAreaData(result.data);
+      })
+      .catch((error) => console.log("error", error));
+  };
+
+  useEffect(() => {
+    getCityApi();
+  }, []);
+
   return (
     <SafeAreaView
       style={{ ...GloableStyle.container, backgroundColor: Color.green2 }}
@@ -188,6 +288,14 @@ function Signup({ navigation }) {
           ></TextInput>
           <TextInput
             onChangeText={(value) => {
+              setUserAddress(value);
+            }}
+            placeholder="Enter Your Address"
+            placeholderTextColor={"grey"}
+            style={styles.input}
+          ></TextInput>
+          <TextInput
+            onChangeText={(value) => {
               setNewPassword(value);
             }}
             placeholder="Enter Password*"
@@ -202,7 +310,36 @@ function Signup({ navigation }) {
             placeholderTextColor={"grey"}
             style={styles.input}
           ></TextInput>
-
+          <TouchableOpacity
+            style={styles.input}
+            onPress={() => {
+              setShowCityModal(true);
+            }}
+          >
+            <Text style={{ color: Color.black }}>
+              {city == "" ? "Select City" : city}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.input}
+            onPress={() => {
+              setShowRegionModal(true);
+            }}
+          >
+            <Text style={{ color: Color.black }}>
+              {region == "" ? "Select Region" : region}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.input}
+            onPress={() => {
+              setShowAreaModal(true);
+            }}
+          >
+            <Text style={{ color: Color.black }}>
+              {area == "" ? "Select Area" : area}
+            </Text>
+          </TouchableOpacity>
           <View
             style={{
               flexDirection: "row",
@@ -314,10 +451,173 @@ function Signup({ navigation }) {
           </View>
         </View>
       </ScrollView>
+      <Modal
+        transparent={true}
+        visible={showCityModal}
+        onRequestClose={() => {
+          setShowCityModal(false);
+        }}
+        animationType="slide"
+        statusBarTranslucent
+      >
+        <View style={{ flex: 1, backgroundColor: "rgba(52,52,52,0.5)" }}>
+          <TouchableOpacity
+            onPress={() => {
+              setShowCityModal(false);
+            }}
+            style={{
+              flex: 1,
+            }}
+          ></TouchableOpacity>
+          <View style={styles.mainView}>
+            <Text style={styles.modalHeading}>Please Select City</Text>
+            <FlatList
+              style={{ width: "100%" }}
+              data={cityData}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => {
+                return (
+                  <TouchableOpacity
+                    onPress={() => {
+                      getRegionApi(item.id);
+                      setCity(item.lname.toUpperCase());
+                      setShowCityModal(false);
+                    }}
+                    style={styles.modalAddView}
+                  >
+                    <Text style={styles.modalCity}>
+                      {item.lname.toUpperCase()}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        transparent={true}
+        visible={showRegionModal}
+        onRequestClose={() => {
+          setShowRegionModal(false);
+        }}
+        animationType="slide"
+        statusBarTranslucent
+      >
+        <View style={{ flex: 1, backgroundColor: "rgba(52,52,52,0.5)" }}>
+          <TouchableOpacity
+            onPress={() => {
+              setShowRegionModal(false);
+            }}
+            style={{
+              flex: 1,
+            }}
+          ></TouchableOpacity>
+          <View style={styles.mainView}>
+            <Text style={styles.modalHeading}>Please Select Region</Text>
+            <FlatList
+              style={{ width: "100%" }}
+              data={regionData}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => {
+                return (
+                  <TouchableOpacity
+                    onPress={() => {
+                      getAreaApi(item.id);
+                      setRegion(item.region_name.toUpperCase());
+                      setShowRegionModal(false);
+                    }}
+                    style={styles.modalAddView}
+                  >
+                    <Text style={styles.modalCity}>
+                      {item.region_name.toUpperCase()}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        transparent={true}
+        visible={showAreaModal}
+        onRequestClose={() => {
+          setShowAreaModal(false);
+        }}
+        animationType="slide"
+        statusBarTranslucent
+      >
+        <View style={{ flex: 1, backgroundColor: "rgba(52,52,52,0.5)" }}>
+          <TouchableOpacity
+            onPress={() => {
+              setShowAreaModal(false);
+            }}
+            style={{
+              flex: 1,
+            }}
+          ></TouchableOpacity>
+          <View style={styles.mainView}>
+            <Text style={styles.modalHeading}>Please Select Area</Text>
+            <FlatList
+              style={{ width: "100%" }}
+              data={areaData}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => {
+                return (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setArea(item.area_name.toUpperCase());
+                      setCityId(item.city_id);
+                      setRegionId(item.region_id);
+                      setAreaId(item.id);
+                      setShowAreaModal(false);
+                    }}
+                    style={styles.modalAddView}
+                  >
+                    <Text style={styles.modalCity}>
+                      {item.area_name.toUpperCase()}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
+  modalCity: {
+    color: Color.white1,
+  },
+  modalAddView: {
+    backgroundColor: Color.green,
+    paddingHorizontal: horizScale(20),
+    paddingVertical: horizScale(5),
+    marginVertical: horizScale(5),
+    borderRadius: horizScale(10),
+  },
+  modalHeading: {
+    color: Color.black,
+    fontSize: fontSize.input,
+    fontWeight: "600",
+    marginBottom: horizScale(20),
+  },
+  mainView: {
+    height: "50%",
+    width: "100%",
+    flex: 1,
+    position: "absolute",
+    backgroundColor: Color.white1,
+    borderRadius: horizScale(10),
+    padding: horizScale(20),
+    alignItems: "center",
+    justifyContent: "space-between",
+    bottom: horizScale(0),
+  },
   container: {
     flex: 1,
     backgroundColor: Color.white2,

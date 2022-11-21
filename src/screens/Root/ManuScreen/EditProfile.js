@@ -32,6 +32,7 @@ import { API_END_POINT } from "../../../utils/ApiEndPoint";
 import ApiCall from "../../../utils/ApiCall";
 import { ShowMessage } from "../../../utils/ShowMessage";
 import Loader from "../../../utils/Loader";
+import axios from "axios";
 
 const EditProfile = ({ navigation }) => {
   const [profileImage, setprofileImage] = useState({});
@@ -44,6 +45,7 @@ const EditProfile = ({ navigation }) => {
   const [pincode, setpincode] = useState("");
   const [edit, setEdit] = useState("");
   const [modal, setModal] = useState(false);
+
   const cameraLaunch = async () => {
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -55,6 +57,8 @@ const EditProfile = ({ navigation }) => {
     setprofileImage(result);
   };
 
+  console.log("This is profile properties", profileImage);
+
   const imageGalleryLaunch = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -62,9 +66,10 @@ const EditProfile = ({ navigation }) => {
       aspect: [3, 4],
       quality: 1,
     });
-    console.log("image===>>>", result.uri);
-    setprofileImage(result.uri);
+    console.log("image===>>>", result);
+    setprofileImage(result);
   };
+
   const requestCameraPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -168,18 +173,49 @@ const EditProfile = ({ navigation }) => {
     setLoader(true);
     const url = API_END_POINT.edit_profile + user;
     let data = {
-      name: name,
+      uname: name,
       email: email,
       address: first,
+      // photo: "fb",
       photo: {
-        name: profileImage.name,
-        type: profileImage.type,
+        name: "babu",
+        type: "image/jpeg",
         uri: profileImage.uri,
       },
     };
-    let headers = { "Content-Type": "multipart/form-data" };
-    ApiCall("post", data, url, headers)
+
+    let formdata = new FormData();
+    formdata.append("uname", name);
+    formdata.append("email", email);
+    formdata.append("address", first);
+    formdata.append("photo", {
+      uri: profileImage.uri,
+      name: profileImage.uri,
+      type: "image/jpeg",
+    });
+
+    // let headers = { "Content-Type": "multipart/form-data" };
+    // ApiCall("post", formdata, url)
+
+    // let config = {
+    //   method: "post",
+    //   url: "https://www.samajutkarsh.com/Milk_Man1/api/editprofile/235",
+    //   headers: {
+    //     "Content-Type": "multipart/form-data",
+    //   },
+    //   data: data,
+    // };
+
+    // axios(config)
+    var requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow",
+    };
+    fetch(url, requestOptions)
+      .then((res) => res.json())
       .then((result) => {
+        console.log(result);
         if (result.data.response) {
           ShowMessage("Profile updated successfully");
           setData(result.data.data);
@@ -229,8 +265,8 @@ const EditProfile = ({ navigation }) => {
           <Image
             style={GloableStyle.profileImage}
             source={{
-              uri: profileImage
-                ? profileImage
+              uri: profileImage.uri
+                ? profileImage.uri
                 : "https://indianmodels.in/tim/timthumb.php?src=/images/im_1572351570_IMG-20191021-WA0022.jpg&w=640&h=480&zc=1&cc=",
             }}
           />

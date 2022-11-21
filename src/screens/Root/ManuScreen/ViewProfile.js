@@ -131,7 +131,10 @@ const ViewProfile = ({ navigation }) => {
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ ...GloableStyle.profileView, flex: 0.2 }}>
-          <Image style={GloableStyle.profileImage} source={CustomImage.user} />
+          <Image
+            style={GloableStyle.profileImage}
+            source={{ uri: data?.image }}
+          />
           <Text
             style={[GloableStyle.headingText, { marginLeft: 0, fontSize: 18 }]}
           >

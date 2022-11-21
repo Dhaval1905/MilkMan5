@@ -22,6 +22,7 @@ import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_END_POINT } from "../../utils/ApiEndPoint";
 import ApiCall from "../../utils/ApiCall";
+import { ShowMessage } from "../../utils/ShowMessage";
 
 export default function Home({ navigation }) {
   const [wallet, setWallet] = useState(200.11);
@@ -222,6 +223,7 @@ export default function Home({ navigation }) {
         } else {
           if (value !== null) {
             getUserProfile(value);
+            console.log(value, "This is useridddddddd");
           } else {
             // navigation.replace('login');
           }

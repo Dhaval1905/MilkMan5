@@ -174,8 +174,7 @@ const Manu = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              // navigation.navigate('ViewProfile')
-              alert("Coming Soon");
+              navigation.navigate("MyCart");
             }}
             style={styles.navigateButton}
           >

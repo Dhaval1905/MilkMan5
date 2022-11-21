@@ -16,4 +16,10 @@ export const API_END_POINT = {
   addcart: `${BASE_URL}user/addcart`,
   getorder: `${BASE_URL}user/getorder`,
   wallet: `${BASE_URL}user/wallet1`,
+  cart: `${BASE_URL}user/cart`,
+  deleteCart: `${BASE_URL}user/delete_cart`,
+  getCityApi: `${BASE_URL}user/getcity`,
+  getRegionApi: `${BASE_URL}user/getregion`,
+  getAreaApi: `${BASE_URL}user/getarea`,
+  addOrder: `${BASE_URL}addorder`,
 };

@@ -120,7 +120,7 @@ const ActivePlan = ({ navigation, route }) => {
               Botal return
             </Text>
             <Text style={{ ...styles.oneHeadingText, width: horizScale(100) }}>
-              Today Ammount
+              Wallet Balance
             </Text>
             <Text style={{ ...styles.oneHeadingText, width: horizScale(130) }}>
               Remaining Balance
@@ -135,10 +135,10 @@ const ActivePlan = ({ navigation, route }) => {
               style={{
                 ...styles.one,
                 width: horizScale(90),
-                color: item.status == 0 ? Color.red : Color.green1,
+                color: item.delivery_status == 0 ? Color.red : Color.green1,
               }}
             >
-              {item.delivery_status == 0 ? "Deliverd" : "Pending"}
+              {item.delivery_status == 0 ? "Pending" : "Deliverd"}
             </Text>
             <Text
               style={{
@@ -150,7 +150,7 @@ const ActivePlan = ({ navigation, route }) => {
               {item.return_bottle}
             </Text>
             <Text style={{ ...styles.one, width: horizScale(100) }}>
-              {item.status == 0 ? item.todayAmount : "Coming Soon"}
+              {item.wallet_balance}
             </Text>
             {item.status == 0 ? (
               <Text style={{ ...styles.one, width: horizScale(130) }}>
@@ -171,7 +171,7 @@ const ActivePlan = ({ navigation, route }) => {
                     }}
                     style={{
                       ...GloableStyle.buttonSmall,
-                      marginVertical: 0,
+                      marginTop: 20,
                     }}
                   >
                     <Text style={GloableStyle.buttonTextSmall}>Cancel</Text>

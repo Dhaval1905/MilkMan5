@@ -8,6 +8,7 @@ const removeNBSP = /\&nbsp;/g;
 const { height, width } = Dimensions.get("window");
 const horizScale = (val) => width * (val / REFERENCE_WIDTH);
 const vertScale = (val) => height * (val / REFERENCE_HEIGHT);
+
 const getLocalDate = (strDate) => {
   var date = new Date(strDate);
 
@@ -24,6 +25,24 @@ const getLocalDate = (strDate) => {
   date = dd + "-" + mm + "-" + yyyy;
   return date.toString();
 };
+
+const getApiDate = (strDate) => {
+  var date = new Date(strDate);
+
+  var dd = date.getDate();
+  var mm = date.getMonth() + 1;
+
+  var yyyy = date.getFullYear();
+  if (dd < 10) {
+    dd = "0" + dd;
+  }
+  if (mm < 10) {
+    mm = "0" + mm;
+  }
+  date = yyyy + "-" + mm + "-" + dd;
+  return date.toString();
+};
+
 const days = (date1, date2) => {
   let date_1 = new Date(date1);
   let date_2 = new Date(date2);
@@ -31,4 +50,12 @@ const days = (date1, date2) => {
   let TotalDays = Math.ceil(difference / (1000 * 3600 * 24));
   return TotalDays + 1;
 };
-export { horizScale, vertScale, removeTag, removeNBSP, getLocalDate, days };
+export {
+  horizScale,
+  vertScale,
+  removeTag,
+  removeNBSP,
+  getLocalDate,
+  days,
+  getApiDate,
+};

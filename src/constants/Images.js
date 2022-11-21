@@ -12,5 +12,10 @@ const CustomImage = {
   milk_splash: require("../../assets/images/milk_splash.png"),
 
   go: require("../../assets/images/go.png"),
+  back: require("../../assets/images/back.png"),
+  check: require("../../assets/images/check.png"),
+  orderFaild: require("../../assets/images/failedOrder.png"),
+  right: require("../../assets/images/correct.png"),
+  cancel: require("../../assets/images/cancel.png"),
 };
 export { CustomImage };
