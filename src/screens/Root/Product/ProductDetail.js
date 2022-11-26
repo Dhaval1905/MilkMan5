@@ -58,7 +58,6 @@ const ProductDetail = ({ navigation, route }) => {
   ]);
 
   const [calenderModal, setCalenderModal] = useState(false);
-  const [calenderModalB, setCalenderModalB] = useState(false);
   // const today = new Date();
   // const tomorrow = new Date()
   // tomorrow.setDate(tomorrow.getDate() + 1)
@@ -94,10 +93,6 @@ const ProductDetail = ({ navigation, route }) => {
     setOneTime(date);
   };
 
-  const planBDeliveryDate = (date) => {
-    setPBDeliveryDate(date);
-  };
-
   const alterStartDate = (date) => {
     setAlternateStartDate(date);
   };
@@ -107,7 +102,6 @@ const ProductDetail = ({ navigation, route }) => {
 
     let data = {
       uid: userId,
-      date: getApiDate(pBDeliveryDate),
       quantity: count,
       prod_id: item.id,
       plan2: "B",
@@ -290,7 +284,8 @@ const ProductDetail = ({ navigation, route }) => {
             <Text style={GloableStyle.boldText}>
               {item.pname} {item.quantityType}
             </Text>
-            <Text>₹ {item.sale_cost}</Text>
+            <Text style={{ color: Color.black }}>₹ {item.sale_cost}</Text>
+            <Text style={{ color: Color.black }}>Quantity: {item.unit}</Text>
           </View>
           <View style={{ flex: 0.4, alignItems: "center" }}>
             <TouchableOpacity
@@ -345,56 +340,15 @@ const ProductDetail = ({ navigation, route }) => {
           <Text style={GloableStyle.headingText}>Plan Type</Text>
         ) : (
           <View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-around",
-                alignItems: "center",
-                marginVertical: horizScale(20),
-              }}
-            >
-              <Text
-                style={{
-                  color: Color.black,
-                  fontSize: fontSize.input,
-                  fontWeight: "600",
-                }}
-              >
-                Select Delivery Date :
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  setCalenderModalB(true);
-                }}
-                style={{
-                  backgroundColor: Color.green1,
-                  paddingVertical: horizScale(5),
-                  paddingHorizontal: horizScale(10),
-                  borderRadius: horizScale(20),
-                }}
-              >
-                <Text
-                  style={{
-                    color: Color.white1,
-                    fontSize: fontSize.medium,
-                    fontWeight: "600",
-                  }}
-                >
-                  {pBDeliveryDate == null
-                    ? "Select Date"
-                    : getLocalDate(pBDeliveryDate)}
-                </Text>
-              </TouchableOpacity>
-            </View>
             <View style={GloableStyle.rowcenter}>
               <TouchableOpacity
                 onPress={() => {
-                  if (count > 0 && pBDeliveryDate !== null) {
+                  if (count > 0) {
                     add_to_cart();
                   } else {
                     Platform.OS === "android"
                       ? ToastAndroid.showWithGravity(
-                          "Please add product and delivery date",
+                          "Please add product and quantity",
                           ToastAndroid.SHORT,
                           ToastAndroid.BOTTOM
                         )
@@ -1394,53 +1348,6 @@ const ProductDetail = ({ navigation, route }) => {
             style={GloableStyle.buttonSmall}
             onPress={() => {
               setCalenderModal(false);
-            }}
-          >
-            <Text style={GloableStyle.buttonTextSmall}>Done</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-      <Modal
-        visible={calenderModalB}
-        transparent
-        onRequestClose={() => {
-          setCalenderModalB(false);
-        }}
-      >
-        <View
-          style={{
-            backgroundColor: "rgba(52,52,52,0.8)",
-            flex: 1,
-            justifyContent: "center",
-          }}
-        >
-          <StatusBar backgroundColor={"rgba(52,52,52,0.8)"} />
-          <View
-            style={{
-              backgroundColor: Color.green2,
-              width: horizScale(380),
-              alignSelf: "center",
-              paddingVertical: horizScale(20),
-              borderRadius: horizScale(20),
-            }}
-          >
-            <CalendarPicker
-              minDate={minDate}
-              maxDate={maxDate}
-              todayBackgroundColor={Color.greendark}
-              selectedDayColor={Color.green1}
-              selectedDayTextColor="#FFFFFF"
-              onDateChange={planBDeliveryDate}
-              previousTitle={"Back"}
-              previousTitleStyle={{ left: 10 }}
-              nextTitleStyle={{ right: 10 }}
-              customDatesStyles={alternateDays}
-            />
-          </View>
-          <TouchableOpacity
-            style={GloableStyle.buttonSmall}
-            onPress={() => {
-              setCalenderModalB(false);
             }}
           >
             <Text style={GloableStyle.buttonTextSmall}>Done</Text>

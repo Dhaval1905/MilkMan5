@@ -1,19 +1,67 @@
 import { View, Text, StatusBar } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native";
 import { Color } from "../../../constants/Colors";
 import { GloableStyle } from "../../GloableStyle";
 import { TouchableOpacity } from "react-native";
 import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
-import { horizScale } from "../../../constants/Layout";
+import { getLocalDate, horizScale } from "../../../constants/Layout";
 import { FlatList } from "react-native";
 import { fontSize } from "../../../constants/Fontsize";
 import { StyleSheet } from "react-native";
 import { ScrollView } from "react-native";
+import { API_END_POINT } from "../../../utils/ApiEndPoint";
 
 const ActivePlan = ({ navigation, route }) => {
   const { item } = route.params;
-  console.log("data from route", item);
+  const [orderData, setOrderData] = useState([]);
+
+  const getOrderDetails = () => {
+    let formdata = new FormData();
+    formdata.append("id", item);
+
+    let requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow",
+    };
+
+    fetch(API_END_POINT.getOrderDetails, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        // console.log(result)
+        if (result.response) {
+          setOrderData(result.data);
+        }
+      })
+      .catch((error) => console.log("error", error));
+  };
+
+  const cancelOrder = (id) => {
+    let formdata = new FormData();
+    formdata.append("id", id);
+
+    let requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow",
+    };
+
+    fetch(API_END_POINT.cancelOrder, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        // console.log(result);
+        if (result.response) {
+          getOrderDetails();
+        }
+      })
+      .catch((error) => console.log("error", error));
+  };
+
+  useEffect(() => {
+    getOrderDetails();
+  }, []);
+
   return (
     <SafeAreaView style={GloableStyle.container}>
       <StatusBar backgroundColor={Color.green1} barStyle="light-content" />
@@ -104,83 +152,120 @@ const ActivePlan = ({ navigation, route }) => {
           </Text>
         </View>
       </View>
-      <ScrollView horizontal={true}>
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <View>
-          <View style={styles.table}>
-            <Text style={{ ...styles.oneHeadingText, width: horizScale(50) }}>
-              S.{"\n"} no.
-            </Text>
-            <Text style={{ ...styles.oneHeadingText, width: horizScale(120) }}>
-              Date
-            </Text>
-            <Text style={{ ...styles.oneHeadingText, width: horizScale(90) }}>
-              Delivery Status
-            </Text>
-            <Text style={{ ...styles.oneHeadingText, width: horizScale(120) }}>
-              Botal return
-            </Text>
-            <Text style={{ ...styles.oneHeadingText, width: horizScale(100) }}>
-              Wallet Balance
-            </Text>
-            <Text style={{ ...styles.oneHeadingText, width: horizScale(130) }}>
-              Remaining Balance
-            </Text>
-          </View>
-          <View style={styles.table}>
-            <Text style={{ ...styles.one, width: horizScale(50) }}>1</Text>
-            <Text style={{ ...styles.one, width: horizScale(120) }}>
-              {item.delivery_date}
-            </Text>
-            <Text
-              style={{
-                ...styles.one,
-                width: horizScale(90),
-                color: item.delivery_status == 0 ? Color.red : Color.green1,
-              }}
-            >
-              {item.delivery_status == 0 ? "Pending" : "Deliverd"}
-            </Text>
-            <Text
-              style={{
-                ...styles.one,
-                width: horizScale(120),
-                fontSize: fontSize.medium,
-              }}
-            >
-              {item.return_bottle}
-            </Text>
-            <Text style={{ ...styles.one, width: horizScale(100) }}>
-              {item.wallet_balance}
-            </Text>
-            {item.status == 0 ? (
-              <Text style={{ ...styles.one, width: horizScale(130) }}>
-                {" "}
-                {item.walletBalance}
-              </Text>
-            ) : (
-              <View
-                style={{
-                  ...styles.one,
-                  width: horizScale(130),
-                }}
-              >
-                {
-                  <TouchableOpacity
-                    onPress={() => {
-                      alert("Coming Soon");
-                    }}
-                    style={{
-                      ...GloableStyle.buttonSmall,
-                      marginTop: 20,
-                    }}
+          <FlatList
+            data={orderData}
+            ListHeaderComponent={() => {
+              return (
+                <View style={styles.table}>
+                  <Text
+                    style={{ ...styles.oneHeadingText, width: horizScale(50) }}
                   >
-                    <Text style={GloableStyle.buttonTextSmall}>Cancel</Text>
-                  </TouchableOpacity>
-                }
-              </View>
-            )}
-            {/* <Text style={{ ...styles.one, width: horizScale(130) }}>{item.status == 0 ? item.walletBalance : 'Cencel'}</Text> */}
-          </View>
+                    S.{"\n"} no.
+                  </Text>
+                  <Text
+                    style={{ ...styles.oneHeadingText, width: horizScale(120) }}
+                  >
+                    Date
+                  </Text>
+                  <Text
+                    style={{ ...styles.oneHeadingText, width: horizScale(90) }}
+                  >
+                    Delivery Status
+                  </Text>
+                  <Text
+                    style={{ ...styles.oneHeadingText, width: horizScale(120) }}
+                  >
+                    Botal return
+                  </Text>
+                  <Text
+                    style={{ ...styles.oneHeadingText, width: horizScale(100) }}
+                  >
+                    Wallet Balance
+                  </Text>
+                  <Text
+                    style={{ ...styles.oneHeadingText, width: horizScale(130) }}
+                  >
+                    Remaining Balance
+                  </Text>
+                  <Text
+                    style={{ ...styles.oneHeadingText, width: horizScale(130) }}
+                  >
+                    Cancel today's order
+                  </Text>
+                </View>
+              );
+            }}
+            renderItem={({ item, index }) => {
+              return (
+                <View>
+                  <View style={styles.table}>
+                    <Text style={{ ...styles.one, width: horizScale(50) }}>
+                      {index + 1}
+                    </Text>
+                    <Text style={{ ...styles.one, width: horizScale(120) }}>
+                      {getLocalDate(item.ddate)}
+                    </Text>
+                    <Text
+                      style={{
+                        ...styles.one,
+                        width: horizScale(90),
+                        color:
+                          item.delivery_status == 0 ? Color.red : Color.green1,
+                      }}
+                    >
+                      {item.delivery_status == 0 ? "Pending" : "Deliverd"}
+                    </Text>
+                    <Text
+                      style={{
+                        ...styles.one,
+                        width: horizScale(120),
+                        fontSize: fontSize.medium,
+                      }}
+                    >
+                      {item.return_bottle}
+                    </Text>
+                    <Text style={{ ...styles.one, width: horizScale(100) }}>
+                      fghfg
+                    </Text>
+                    <Text style={{ ...styles.one, width: horizScale(130) }}>
+                      {item.walletBalance}vbfgvf
+                    </Text>
+                    <View
+                      style={{
+                        ...styles.one,
+                        width: horizScale(130),
+                      }}
+                    >
+                      {
+                        <TouchableOpacity
+                          disabled={item.cancel == 1 ? true : false}
+                          onPress={() => {
+                            cancelOrder(item.id);
+                          }}
+                          style={{
+                            ...GloableStyle.buttonSmall,
+                            backgroundColor:
+                              item.cancel == 1 ? Color.red : Color.green1,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              ...GloableStyle.buttonTextSmall,
+                              fontSize: fontSize.small,
+                            }}
+                          >
+                            {item.cancel == 1 ? "Cancelled" : "Cancel"}
+                          </Text>
+                        </TouchableOpacity>
+                      }
+                    </View>
+                  </View>
+                </View>
+              );
+            }}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

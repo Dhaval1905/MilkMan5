@@ -22,4 +22,6 @@ export const API_END_POINT = {
   getRegionApi: `${BASE_URL}user/getregion`,
   getAreaApi: `${BASE_URL}user/getarea`,
   addOrder: `${BASE_URL}addorder`,
+  getOrderDetails: `${BASE_URL}user/getorder_details`,
+  cancelOrder: `${BASE_URL}user/cancelreason`,
 };

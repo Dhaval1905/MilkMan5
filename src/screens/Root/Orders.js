@@ -301,7 +301,9 @@ const Orders = ({ navigation }) => {
                     }}
                     onPress={() => {
                       if (item.status == "Active") {
-                        navigation.navigate("ActivePlan", { item: item });
+                        navigation.navigate("ActivePlan", {
+                          item: item.orderid,
+                        });
                       } else {
                         navigation.navigate("SubProduct", {
                           id: item.categoryId,

@@ -13,6 +13,7 @@ import {
   ImageBackground,
   Modal,
   StyleSheet,
+  SafeAreaView,
 } from "react-native";
 import {
   Ionicons,
@@ -26,18 +27,72 @@ import { GloableStyle } from "../../GloableStyle";
 import { horizScale } from "../../../constants/Layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_END_POINT } from "../../../utils/ApiEndPoint";
-
+import RazorpayCheckout from "react-native-razorpay";
+import { WebView } from 'react-native-webview';
 const PaymentMethod = ({ route, navigation }) => {
   const { orderdetail, selectedPlan, item, finaladdress } = route.params;
   const [modalOpen, setModalopen] = useState(false);
   const [isFailed, setIsfailed] = useState(false);
   const [selectedPaymentMethod, setselectedPaymentMethod] = useState("");
-  // const { orderFood, addonList, totalAddonPrice, subTotal, promoCode } =
-  //   route.params;
-
   const [cartTotal, setCartTotal] = useState("");
   const [data, setData] = useState([]);
   const [userInfo, setUserInfo] = useState({});
+
+  // Payment gateway functions start
+  const step1 = () => {
+    var options = {
+      // order_id: 'order_K9P8XNwtT3je4j',
+      description: "Payment To Milk Man",
+      image: "https://www.samajutkarsh.com/Milk_Man1/images/milkman.jpeg",
+      currency: "INR",
+      key: "rzp_test_nJyYy2CUz9HysQ",
+      amount: 1 * 100,
+      name: "Milk Man",
+      prefile: {
+        email: userInfo.email,
+        contact: userInfo.mobile,
+        name: userInfo.name,
+      },
+      theme: { color: Color.green1 },
+    };
+    step2(options);
+  };
+  const step2 = (info) => {
+    RazorpayCheckout.open(info)
+      .then((data) => {
+        const orderid = data;
+        const url = "https://api.razorpay.com/v1/payments/" + orderid;
+
+        //
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Basic cnpwX3Rlc3Rfbkp5WXkyQ1V6OUh5c1E6UGNTdW1rZjQ4eVBhOUlUZElPWnNreUln");
+
+        var requestOptions = {
+          method: 'GET',
+          headers: myHeaders,
+          redirect: 'follow'
+        };
+        fetch(url, requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            console.log(`id: ${orderid} \nSuccess: ${result}`);
+            alert(`id: ${orderid} \nSuccess: ${JSON.stringify(result)}`);
+          })
+          .catch((error) => console.log("error", error));
+
+      })
+      .catch((error) => {
+        // handle failure
+        console.log(`Error: code ->
+         ${JSON.stringify(error.code)} |||||||||||||
+         desc->  ${JSON.stringify(error.description)}`);
+        alert(`Error: code ->
+         ${JSON.stringify(error.code)} |||||||||||||
+         desc->  ${JSON.stringify(error.description)}`);
+      });
+  };
+
+  // Payment gateway functions end
 
   const cartDataFunc = async () => {
     const userid = await AsyncStorage.getItem("userId");
@@ -283,7 +338,8 @@ const PaymentMethod = ({ route, navigation }) => {
             alert("Please select payment method");
           } else {
             if (selectedPaymentMethod == "UPI") {
-              alert("UPI Coming Soon");
+              step1()
+
             } else {
               placeOrderFunc();
             }
@@ -323,9 +379,6 @@ const PaymentMethod = ({ route, navigation }) => {
       </TouchableOpacity>
     );
   };
-
-  // successOrder
-  // failedOrder
 
   const renderModalVIew = () => {
     const iconname = isFailed

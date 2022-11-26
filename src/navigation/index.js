@@ -30,7 +30,10 @@ const Stack = createNativeStackNavigator();
 
 function RootNavigator() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="Auth"
+    >
       <Stack.Screen name="Auth" component={Auth} />
       <Stack.Screen name="MyDrawer" component={MyDrawer} />
       <Stack.Screen
@@ -118,12 +121,13 @@ function RootNavigator() {
         component={AboutUs}
         options={{ headerShown: false }}
       />
+
     </Stack.Navigator>
   );
 }
 function Auth() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="Splash">
       <Stack.Screen
         name="Splash"
         component={Splash}

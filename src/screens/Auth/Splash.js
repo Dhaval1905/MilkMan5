@@ -1,26 +1,10 @@
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-} from "react-native";
+import { StyleSheet, ImageBackground } from "react-native";
 import React, { useState, useEffect } from "react";
-import { GloableStyle } from "../GloableStyle";
-import { CustomImage } from "../../constants/Images";
-import { Color } from "../../constants/Colors";
 import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Splash = ({ navigation }) => {
   const [user, setUser] = useState("");
-
-  useEffect(() => {
-    setTimeout(() => {
-      getUserFromStorage();
-    }, 3000);
-  }, []);
 
   const getUserFromStorage = async () => {
     try {
@@ -44,11 +28,17 @@ const Splash = ({ navigation }) => {
     }
   };
 
+  useEffect(() => {
+    // setTimeout(() => {
+    getUserFromStorage();
+    // }, 1000);
+  }, []);
+
   return (
     <ImageBackground
       style={{
         flex: 1,
-        backgroundColor: "#00000000",
+        // backgroundColor: "#00000000",
       }}
       source={require("../../../assets/images/milk_splash.png")}
     >

@@ -19,6 +19,7 @@ import Loader from "../../../utils/Loader";
 const SubProduct = ({ navigation, route }) => {
   const { id, name } = route.params;
   const [loader, setLoader] = useState(false);
+  const [isNoProductsShow, setIsNoProductsShow] = useState(false);
 
   useEffect(() => {
     getCategoryProducts();
@@ -46,6 +47,9 @@ const SubProduct = ({ navigation, route }) => {
           //   );
           setSubItem(response?.data?.data);
         } else {
+        }
+        if (response.data?.data.length == 0) {
+          setIsNoProductsShow(!isNoProductsShow);
         }
       })
       .catch((error) => {
@@ -159,8 +163,9 @@ const SubProduct = ({ navigation, route }) => {
         <Text style={GloableStyle.backText}>Back</Text>
       </TouchableOpacity>
       <Text style={GloableStyle.headingText}>
-        {name ? name : "Select "} Item
+        {name ? name : "Select "} ITEM
       </Text>
+
       <FlatList
         data={subItem}
         numColumns={2}
@@ -173,15 +178,17 @@ const SubProduct = ({ navigation, route }) => {
                 alignItems: "center",
               }}
             >
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: "bold",
-                  marginVertical: 100,
-                }}
-              >
-                No Products Available
-              </Text>
+              {isNoProductsShow ? (
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    marginVertical: 100,
+                  }}
+                >
+                  No Products Available
+                </Text>
+              ) : null}
             </View>
           );
         }}
@@ -206,9 +213,17 @@ const SubProduct = ({ navigation, route }) => {
                 }}
               />
               <Text style={styles.nametext}>{item.pname}</Text>
-              <Text style={styles.itemsstyle}>
-                {item.mrp} {item.quantityType}
-              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginHorizontal: horizScale(10),
+                }}
+              >
+                <Text style={styles.itemsstyle}>₹ {item.sale_cost}/-</Text>
+                <Text style={styles.itemsstyle1}>{item.unit}</Text>
+              </View>
             </TouchableOpacity>
           );
           //   }
@@ -244,6 +259,14 @@ const styles = StyleSheet.create({
     fontSize: fontSize.regular,
   },
   itemsstyle: {
+    textAlign: "left",
+    marginTop: horizScale(5),
+    marginLeft: horizScale(10),
+    fontWeight: "600",
+    color: Color.black,
+    fontSize: fontSize.small,
+  },
+  itemsstyle1: {
     textAlign: "left",
     marginTop: horizScale(5),
     marginLeft: horizScale(10),
