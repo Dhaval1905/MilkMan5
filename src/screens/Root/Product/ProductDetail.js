@@ -58,10 +58,9 @@ const ProductDetail = ({ navigation, route }) => {
   ]);
 
   const [calenderModal, setCalenderModal] = useState(false);
-  // const today = new Date();
-  // const tomorrow = new Date()
-  // tomorrow.setDate(tomorrow.getDate() + 1)
-  const minDate = new Date(2022, 6, 1);
+  const minDate = new Date();
+  // console.log(nd, "This is the minimum date type");
+  // const minDate = new Date(year, month, day);
   const maxDate = new Date(2025, 12, 31);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -1266,7 +1265,20 @@ const ProductDetail = ({ navigation, route }) => {
         visible={calenderModal}
         transparent
         onRequestClose={() => {
-          setCalenderModal(false);
+          // setCalenderModal(false);
+          if (selectedPlan == "Daily" && days(startDate, endDate) > 1) {
+            setCalenderModal(false);
+          } else if (
+            selectedPlan == "Alternate Days" &&
+            alternateStartDate !== null
+          ) {
+            setCalenderModal(false);
+          } else if (selectedPlan == "One Time" && oneTime !== null) {
+            setCalenderModal(false);
+          } else {
+            // alert("please select date");
+            ShowMessage("Please select valid date");
+          }
         }}
       >
         <View
@@ -1347,7 +1359,19 @@ const ProductDetail = ({ navigation, route }) => {
           <TouchableOpacity
             style={GloableStyle.buttonSmall}
             onPress={() => {
-              setCalenderModal(false);
+              if (selectedPlan == "Daily" && days(startDate, endDate) > 1) {
+                setCalenderModal(false);
+              } else if (
+                selectedPlan == "Alternate Days" &&
+                alternateStartDate !== null
+              ) {
+                setCalenderModal(false);
+              } else if (selectedPlan == "One Time" && oneTime !== null) {
+                setCalenderModal(false);
+              } else {
+                // alert("please select date");
+                ShowMessage("Please select valid date");
+              }
             }}
           >
             <Text style={GloableStyle.buttonTextSmall}>Done</Text>

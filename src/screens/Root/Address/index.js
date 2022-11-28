@@ -16,18 +16,11 @@ import { horizScale } from "../../../constants/Layout";
 import { fontSize } from "../../../constants/Fontsize";
 import { API_END_POINT } from "../../../utils/ApiEndPoint";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import GetLocation from "react-native-get-location";
 
 const Address = ({ navigation, route }) => {
+  const [googleLocation, setGoogleLocation] = useState("");
   const { item, selectedPlan, orderdetail } = route.params;
-  // const [user, setUser] = useState({
-  //   name: "Rohit Carpenter",
-  //   address: {
-  //     first: "115 sunderam complex",
-  //     second: "bhavarkuaa road",
-  //     city: "indore",
-  //     pincode: "452001",
-  //   },
-  // });
   const [userDetails, setUserDetails] = useState({});
   const [first, setfirst] = useState("");
   const [second, setsecond] = useState("");
@@ -56,6 +49,21 @@ const Address = ({ navigation, route }) => {
   useEffect(() => {
     getUserDetails();
   }, []);
+
+  const getGoogleLocation = () => {
+    // alert("google location func");
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 15000,
+    })
+      .then((location) => {
+        console.log(location);
+      })
+      .catch((error) => {
+        const { code, message } = error;
+        console.warn(code, message);
+      });
+  };
 
   return (
     <SafeAreaView style={GloableStyle.container}>
@@ -119,6 +127,20 @@ const Address = ({ navigation, route }) => {
           <Text style={styles.radioText}>Use Custom Adrress</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={styles.radioButtonView}
+          onPress={() => {
+            setSelectedAddress("Google");
+          }}
+        >
+          <Ionicons
+            name="radio-button-on"
+            size={24}
+            color={selectedAddress == "Google" ? Color.green1 : Color.gray}
+          />
+          <Text style={styles.radioText}>Get My Location</Text>
+        </TouchableOpacity>
+
         {selectedAddress == "Custom" && (
           <View>
             <Text style={styles.simpleText}>Address First</Text>
@@ -161,6 +183,57 @@ const Address = ({ navigation, route }) => {
           </View>
         )}
 
+        {selectedAddress == "Google" && (
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flex: 1,
+              marginHorizontal: horizScale(10),
+            }}
+          >
+            <View
+              style={{
+                flex: 0.85,
+                margin: horizScale(10),
+                padding: horizScale(15),
+                borderWidth: horizScale(2),
+                borderRadius: horizScale(10),
+                borderColor:
+                  selectedAddress == "Google" ? Color.green1 : Color.gray,
+              }}
+            >
+              <Text numberOfLines={2} style={{ color: Color.black }}>
+                {googleLocation == ""
+                  ? "Get Your Google Location"
+                  : googleLocation}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={{
+                flex: 0.15,
+                backgroundColor: Color.green1,
+                padding: horizScale(15),
+                borderRadius: horizScale(10),
+              }}
+              onPress={() => {
+                getGoogleLocation();
+              }}
+            >
+              <Text
+                style={{
+                  color: Color.white1,
+                  fontWeight: "600",
+                  fontSize: fontSize.regular,
+                  alignSelf: "center",
+                }}
+              >
+                Get
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <TouchableOpacity
           onPress={() => {
             if (selectedAddress == "") {
@@ -177,7 +250,9 @@ const Address = ({ navigation, route }) => {
                 finaladdress:
                   selectedAddress == "Default"
                     ? userDetails?.address
-                    : finaladdress,
+                    : selectedAddress == "Custom"
+                    ? finaladdress
+                    : googleLocation,
               });
             }
           }}
