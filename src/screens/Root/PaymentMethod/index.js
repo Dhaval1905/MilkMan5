@@ -28,7 +28,7 @@ import { horizScale } from "../../../constants/Layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_END_POINT } from "../../../utils/ApiEndPoint";
 import RazorpayCheckout from "react-native-razorpay";
-import { WebView } from 'react-native-webview';
+import { WebView } from "react-native-webview";
 const PaymentMethod = ({ route, navigation }) => {
   const { orderdetail, selectedPlan, item, finaladdress } = route.params;
   const [modalOpen, setModalopen] = useState(false);
@@ -41,14 +41,14 @@ const PaymentMethod = ({ route, navigation }) => {
   // Payment gateway functions start
   const step1 = () => {
     var options = {
-      // order_id: 'order_K9P8XNwtT3je4j',
+      // order_id: "order_K9P8XNwtT3je4j",
       description: "Payment To Milk Man",
       image: "https://www.samajutkarsh.com/Milk_Man1/images/milkman.jpeg",
       currency: "INR",
-      key: "rzp_test_nJyYy2CUz9HysQ",
+      key: "rzp_live_5WkUCfPHQRw2BW",
       amount: 1 * 100,
       name: "Milk Man",
-      prefile: {
+      prefill: {
         email: userInfo.email,
         contact: userInfo.mobile,
         name: userInfo.name,
@@ -65,21 +65,28 @@ const PaymentMethod = ({ route, navigation }) => {
 
         //
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Basic cnpwX3Rlc3Rfbkp5WXkyQ1V6OUh5c1E6UGNTdW1rZjQ4eVBhOUlUZElPWnNreUln");
+        myHeaders.append(
+          "Authorization",
+          "Basic cnpwX3Rlc3Rfbkp5WXkyQ1V6OUh5c1E6UGNTdW1rZjQ4eVBhOUlUZElPWnNreUln"
+        );
 
         var requestOptions = {
-          method: 'GET',
+          method: "GET",
           headers: myHeaders,
-          redirect: 'follow'
+          redirect: "follow",
         };
         fetch(url, requestOptions)
           .then((response) => response.json())
           .then((result) => {
-            console.log(`id: ${orderid} \nSuccess: ${result}`);
-            alert(`id: ${orderid} \nSuccess: ${JSON.stringify(result)}`);
+            placeOrderUpi(orderid.razorpay_payment_id);
+            console.log(
+              `id-->>: ${JSON.stringify(orderid)} \nSuccess: ${JSON.stringify(
+                result
+              )}`
+            );
+            // alert(`id: ${orderid} \nSuccess: ${JSON.stringify(result)}`);
           })
           .catch((error) => console.log("error", error));
-
       })
       .catch((error) => {
         // handle failure
@@ -91,7 +98,6 @@ const PaymentMethod = ({ route, navigation }) => {
          desc->  ${JSON.stringify(error.description)}`);
       });
   };
-
   // Payment gateway functions end
 
   const cartDataFunc = async () => {
@@ -153,6 +159,34 @@ const PaymentMethod = ({ route, navigation }) => {
     formdata.append("mobile", userInfo.mobile);
     formdata.append("address", finaladdress);
     // formdata.append("payment_id", "123");
+
+    let requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow",
+    };
+
+    fetch(API_END_POINT.addOrder, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+        if (result.response) {
+          setModalopen(true);
+        }
+      })
+      .catch((error) => console.log("error", error));
+  };
+
+  const placeOrderUpi = (pid) => {
+    // alert(pid);
+    let formdata = new FormData();
+    formdata.append("uid", userInfo.id);
+    formdata.append("name", userInfo.uname);
+    formdata.append("email", userInfo.email);
+    formdata.append("mobile", userInfo.mobile);
+    formdata.append("address", finaladdress);
+    formdata.append("payment_id", pid);
+    formdata.append("pmode", "online");
 
     let requestOptions = {
       method: "POST",
@@ -338,8 +372,7 @@ const PaymentMethod = ({ route, navigation }) => {
             alert("Please select payment method");
           } else {
             if (selectedPaymentMethod == "UPI") {
-              step1()
-
+              step1();
             } else {
               placeOrderFunc();
             }
@@ -411,6 +444,13 @@ const PaymentMethod = ({ route, navigation }) => {
             activeOpacity={1}
             onPress={() => {
               closeModal();
+              if (isFailed) {
+              } else {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: "MyDrawer" }],
+                });
+              }
             }}
             style={{ flex: 1 }}
           ></TouchableOpacity>

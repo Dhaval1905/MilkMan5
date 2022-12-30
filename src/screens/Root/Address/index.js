@@ -17,6 +17,7 @@ import { fontSize } from "../../../constants/Fontsize";
 import { API_END_POINT } from "../../../utils/ApiEndPoint";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import GetLocation from "react-native-get-location";
+import * as Location from "expo-location";
 
 const Address = ({ navigation, route }) => {
   const [googleLocation, setGoogleLocation] = useState("");
@@ -29,6 +30,7 @@ const Address = ({ navigation, route }) => {
 
   const finaladdress = first + " " + second + " " + city + " " + pincode;
   const [selectedAddress, setSelectedAddress] = useState("");
+  const [locationObj, setLocationObj] = useState({});
 
   const getUserDetails = async () => {
     const userId = await AsyncStorage.getItem("userId");
@@ -46,24 +48,48 @@ const Address = ({ navigation, route }) => {
       .catch((error) => console.log("error", error));
   };
 
-  useEffect(() => {
-    getUserDetails();
-  }, []);
+  const getLiveAddress = async () => {
+    let address = await Location.reverseGeocodeAsync({
+      latitude: locationObj.latitude,
+      longitude: locationObj.longitude,
+    });
+    console.log("address ->> ", address);
+    let a = address[0];
+    let fullAddress =
+      a.name +
+      " " +
+      a.district +
+      " " +
+      a.city +
+      ", " +
+      a.region +
+      ", " +
+      a.postalCode +
+      ", " +
+      a.country;
+    setGoogleLocation(fullAddress);
+  };
 
-  const getGoogleLocation = () => {
-    // alert("google location func");
-    GetLocation.getCurrentPosition({
+  const getGoogleLocation = async () => {
+    await GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 15000,
     })
       .then((location) => {
         console.log(location);
+        setLocationObj(location);
       })
       .catch((error) => {
         const { code, message } = error;
         console.warn(code, message);
       });
   };
+
+  useEffect(() => {
+    getGoogleLocation();
+    getUserDetails();
+    getLiveAddress();
+  }, [locationObj]);
 
   return (
     <SafeAreaView style={GloableStyle.container}>
@@ -206,7 +232,7 @@ const Address = ({ navigation, route }) => {
             >
               <Text numberOfLines={2} style={{ color: Color.black }}>
                 {googleLocation == ""
-                  ? "Get Your Google Location"
+                  ? "Getting Your Location..."
                   : googleLocation}
               </Text>
             </View>

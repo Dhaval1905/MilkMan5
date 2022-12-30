@@ -302,7 +302,7 @@ const Orders = ({ navigation }) => {
                     onPress={() => {
                       if (item.status == "Active") {
                         navigation.navigate("ActivePlan", {
-                          item: item.orderid,
+                          item: item,
                         });
                       } else {
                         navigation.navigate("SubProduct", {

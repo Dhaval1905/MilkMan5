@@ -18,7 +18,7 @@ const ActivePlan = ({ navigation, route }) => {
 
   const getOrderDetails = () => {
     let formdata = new FormData();
-    formdata.append("id", item);
+    formdata.append("id", item.orderid);
 
     let requestOptions = {
       method: "POST",
@@ -29,7 +29,7 @@ const ActivePlan = ({ navigation, route }) => {
     fetch(API_END_POINT.getOrderDetails, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        // console.log(result)
+        console.log(result);
         if (result.response) {
           setOrderData(result.data);
         }
@@ -137,7 +137,8 @@ const ActivePlan = ({ navigation, route }) => {
               fontSize: fontSize.regular,
             }}
           >
-            {item.itemname}
+            Wallet Balance {"\n"}
+            {item.wallet_balance}₹ /-
           </Text>
           <Text
             style={{
@@ -167,27 +168,27 @@ const ActivePlan = ({ navigation, route }) => {
                   <Text
                     style={{ ...styles.oneHeadingText, width: horizScale(120) }}
                   >
-                    Date
+                    Delivery {"\n"} Date
                   </Text>
                   <Text
                     style={{ ...styles.oneHeadingText, width: horizScale(90) }}
                   >
-                    Delivery Status
+                    Delivery {"\n"} Status
                   </Text>
                   <Text
                     style={{ ...styles.oneHeadingText, width: horizScale(120) }}
                   >
-                    Botal return
+                    Botal {"\n"} Return
                   </Text>
                   <Text
                     style={{ ...styles.oneHeadingText, width: horizScale(100) }}
                   >
-                    Wallet Balance
+                    Today {"\n"} Price
                   </Text>
                   <Text
                     style={{ ...styles.oneHeadingText, width: horizScale(130) }}
                   >
-                    Remaining Balance
+                    Bottle {"\n"} Returned
                   </Text>
                   <Text
                     style={{ ...styles.oneHeadingText, width: horizScale(130) }}
@@ -211,11 +212,10 @@ const ActivePlan = ({ navigation, route }) => {
                       style={{
                         ...styles.one,
                         width: horizScale(90),
-                        color:
-                          item.delivery_status == 0 ? Color.red : Color.green1,
+                        color: item.status == 0 ? Color.red : Color.green1,
                       }}
                     >
-                      {item.delivery_status == 0 ? "Pending" : "Deliverd"}
+                      {item.status == 0 ? "Pending" : "Deliverd"}
                     </Text>
                     <Text
                       style={{
@@ -224,13 +224,20 @@ const ActivePlan = ({ navigation, route }) => {
                         fontSize: fontSize.medium,
                       }}
                     >
-                      {item.return_bottle}
+                      {item.no_of_return}
                     </Text>
                     <Text style={{ ...styles.one, width: horizScale(100) }}>
-                      fghfg
+                      {item.daily} ₹/-
                     </Text>
-                    <Text style={{ ...styles.one, width: horizScale(130) }}>
-                      {item.walletBalance}vbfgvf
+                    <Text
+                      style={{
+                        ...styles.one,
+                        width: horizScale(130),
+                        color:
+                          item.return_bottle == 0 ? Color.red : Color.green1,
+                      }}
+                    >
+                      {item.return_bottle == 0 ? "Not \n Returned" : "Returned"}
                     </Text>
                     <View
                       style={{
