@@ -10,17 +10,19 @@ import {
   ScrollView,
   ToastAndroid,
   Modal,
+  Button,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { CustomImage } from "../../../constants/Images";
-import { horizScale } from "../../../constants/Layout";
+import { days, getLocalDate, horizScale } from "../../../constants/Layout";
 import { Color } from "../../../constants/Colors";
 import { fontSize } from "../../../constants/Fontsize";
-import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import { AppColor } from "../../../utils/AppColor";
 import { API_END_POINT } from "../../../utils/ApiEndPoint";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from "../../../utils/Loader";
+import { GloableStyle } from "../../GloableStyle";
 
 const MyCart = ({ navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -28,6 +30,7 @@ const MyCart = ({ navigation }) => {
   const [cartTotal, setCartTotal] = useState("");
   const [data, setData] = useState([]);
   const [loader, setLoader] = useState(false);
+  const [show, setShow] = useState([]);
 
   // const updateQuantity = (id, value) => {
   //   let tempArr = [...data];
@@ -38,6 +41,26 @@ const MyCart = ({ navigation }) => {
   //   });
   //   setData(tempArr);
   // };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   const cartDataFunc = async () => {
     const userid = await AsyncStorage.getItem("userId");
@@ -55,9 +78,14 @@ const MyCart = ({ navigation }) => {
     fetch(url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        // console.log(result)
+        console.log("hagdsjgsdajdsjha ===== result ====",result)
         setCartTotal(result.cart_total);
         setData(result.data);
+
+
+        setShow(result.data)
+        console.log("setData ==================>",show[0].days)
+
         setLoader(false);
       })
       .catch((error) => {
@@ -109,6 +137,7 @@ const MyCart = ({ navigation }) => {
 
   const cartItems = ({ item }) => {
     return (
+      <View style={styles.mainCardView}>
       <View style={styles.cartItemView}>
         <Image source={{ uri: item.image }} style={styles.cartImage} />
         <View style={{ flex: 1 }}>
@@ -184,7 +213,92 @@ const MyCart = ({ navigation }) => {
               : null}
           </Text>
         </View>
+
+        
       </View>
+
+
+
+{/* Show */}
+
+
+      <View>
+
+
+
+      {
+        item.plan=="A"?   <View style={styles.datecontainer}>
+        <View style={styles.datemsg}>
+          <View style={{ flex: 0.85 }}>
+            <View style={GloableStyle.rowtwoitem}>
+              <Text style={{ width: horizScale(90) }}>Start From</Text>
+              {/* <Text style={styles.date}>{getLocalDate(startDate)}</Text> */}
+              <Text style={styles.date}>{getLocalDate(item.date)}</Text>
+            </View>
+            {/* <View style={GloableStyle.rowtwoitem}>
+              <Text style={{ width: horizScale(90) }}>To</Text>
+              <Text style={styles.date}>{getLocalDate(item.date)}</Text>
+            </View> */}
+          </View>
+          {/* <TouchableOpacity
+            style={{
+              flex: 0.1,
+              backgroundColor: Color.white1,
+              alignItems: "center",
+              padding: horizScale(8),
+              borderRadius: horizScale(50),
+            }}
+            activeOpacity={0.8}
+            onPress={() => {
+              // setCalenderModal(true);
+            }}
+          >
+            <MaterialCommunityIcons
+              name="calendar-edit"
+              size={24}
+              color={Color.green}
+            />
+          </TouchableOpacity> */}
+        </View>
+
+        <View style={styles.datemsg}>
+          <View>
+            <Text style={styles.date}>Price</Text>
+            <Text style={styles.date}>{item.sale_cost}</Text>
+          </View>
+          <View>
+            <Text style={styles.date}>*</Text>
+            <Text style={styles.date}>*</Text>
+          </View>
+          <View>
+            <Text style={styles.date}>Days</Text>
+            <Text style={styles.date}>{item.days}</Text>
+          </View>
+          <View>
+            <Text style={styles.date}>*</Text>
+            <Text style={styles.date}>*</Text>
+          </View>
+          <View>
+            <Text style={styles.date}>Quantity</Text>
+            <Text style={styles.date}>{item.prod_quantity}</Text>
+          </View>
+          <View>
+            <Text style={styles.date}>=</Text>
+            <Text style={styles.date}>=</Text>
+          </View>
+          <View>
+            <Text style={styles.date}>Amount</Text>
+            <Text style={styles.date}>
+{item.total}
+            </Text>
+          </View>
+        </View>
+      </View>:null
+      }
+
+          
+      </View>
+     </View>
     );
   };
 
@@ -251,6 +365,7 @@ const MyCart = ({ navigation }) => {
               <Text style={styles.chelBtnText}>Checkout ₹ {cartTotal}</Text>
               <Image source={CustomImage.check} style={styles.checkIcon} />
             </TouchableOpacity>
+
           </View>
         ) : null}
       </ScrollView>
@@ -301,6 +416,7 @@ const MyCart = ({ navigation }) => {
               </TouchableOpacity>
             </View>
           </View>
+         
         </View>
       </Modal>
     </SafeAreaView>
@@ -470,4 +586,29 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: horizScale(20),
     marginBottom: horizScale(5),
   },
+  datemsg: {
+    flexDirection: "row",
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    padding: horizScale(10),
+    width: "100%",
+  },
+  date: {
+    color: Color.black,
+    fontSize: fontSize.regular,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  datecontainer: {
+    backgroundColor: Color.green2,
+    borderRadius: horizScale(10),
+
+    marginHorizontal: horizScale(10),
+    elevation: 9,
+    // marginVertical: horizScale(20),
+  },
+  mainCardView:{
+    marginBottom: 40
+  }
 });

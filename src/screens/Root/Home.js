@@ -435,171 +435,20 @@ export default function Home({ navigation }) {
           Recommended Products
         </Text>
 
-        <FlatList
-          data={recommended}
-          numColumns={2}
-          style={{
-            // marginHorizontal: 10,
-            alignSelf: "center",
-          }}
-          ItemSeparatorComponent={() => (
-            <View style={{ height: horizScale(10) }} />
-          )}
-          ListFooterComponent={() => (
-            <View style={{ height: horizScale(10) }} />
-          )}
-          renderItem={({ item, index }) => {
-            return (
-              <Image
-                source={{
-                  uri: item,
-                }}
-                style={{
-                  height: horizScale(250),
-                  width: "95%",
-                  resizeMode: "cover",
-                  // borderRadius: horizScale(5),
-                }}
-              />
-              // <TouchableOpacity
-              //   activeOpacity={0.8}
-              //   onPress={() => {
-              //     // navigation.navigate("SubProduct", {
-              //     //   id: item.id,
-              //     //   name: item.sname,
-              //     // });
-              //   }}
-              //   style={styles.flexcontainer}
-              // >
-              //   <View
-              //     style={{
-              //       backgroundColor: "#f5f5f5",
-              //       // backgroundColor: "#ffff",
-              //       borderTopRightRadius: 8,
-              //       borderTopLeftRadius: 8,
-              //     }}
-              //   >
-              //* #00b86c
-
-              //   </View>
-              //   <Text
-              //     style={{
-              //       fontSize: horizScale(17),
-              //       fontWeight: "bold",
-              //       marginHorizontal: 10,
-              //       marginTop: 5,
-              //       color: Color.black,
-              //     }}
-              //   >
-              //     Taaza Paneer
-              //   </Text>
-              //   <Text
-              //     style={{
-              //       fontSize: horizScale(16),
-              //       marginHorizontal: 10,
-              //       color: Color.gray,
-              //     }}
-              //   >
-              //     180 gm
-              //   </Text>
-
-              //   <View
-              //     style={{
-              //       // paddingBottom: 15,
-              //       marginTop: 15,
-              //       flexDirection: "row",
-              //       justifyContent: "space-between",
-              //     }}
-              //   >
-              //     <View>
-              //       <Text
-              //         style={{
-              //           fontSize: horizScale(13),
-              //           marginHorizontal: 10,
-              //           color: Color.black,
-              //         }}
-              //       >
-              //         VIP Price
-              //       </Text>
-              //       <Text
-              //         style={{
-              //           fontSize: horizScale(17),
-              //           fontWeight: "bold",
-              //           marginHorizontal: 10,
-              //           color: Color.green1,
-              //         }}
-              //       >
-              //         ₹ 67.5
-              //       </Text>
-              //     </View>
-              //     <View>
-              //       <Text
-              //         style={{
-              //           fontSize: horizScale(13),
-              //           marginHorizontal: 10,
-              //           color: Color.black,
-              //         }}
-              //       >
-              //         Regular Price
-              //       </Text>
-              //       <View
-              //         style={{
-              //           flexDirection: "row",
-              //           marginStart: 5,
-              //         }}
-              //       >
-              //         <Text
-              //           style={{
-              //             fontSize: horizScale(17),
-              //             // fontWeight: "bold",
-              //             marginHorizontal: 5,
-              //             color: Color.black,
-              //           }}
-              //         >
-              //           ₹ 89
-              //         </Text>
-              //         <Text
-              //           style={{
-              //             fontSize: horizScale(14),
-              //             marginTop: 2,
-              //             color: Color.gray,
-              //             textDecorationLine: "line-through",
-              //           }}
-              //         >
-              //           ₹ 97
-              //         </Text>
-              //       </View>
-              //     </View>
-              //   </View>
-
-              //   <TouchableOpacity
-              //     activeOpacity={0.8}
-              //     style={{
-              //       height: horizScale(40),
-              //       width: horizScale(130),
-              //       backgroundColor: Color.green1,
-              //       justifyContent: "center",
-              //       alignItems: "center",
-              //       alignSelf: "center",
-              //       marginVertical: horizScale(10),
-              //       borderRadius: horizScale(40),
-              //     }}
-              //   >
-              //     <Text
-              //       style={{
-              //         fontSize: horizScale(17),
-              //         fontWeight: "bold",
-              //         marginHorizontal: 5,
-              //         color: Color.white1,
-              //       }}
-              //     >
-              //       Add
-              //     </Text>
-              //   </TouchableOpacity>
-              // </TouchableOpacity>
-            );
-          }}
-        />
+        {recommended && (
+          <Carousel
+            // ref={(c) => { this._carousel = c; }}
+            data={recommended}
+            renderItem={renderCarouselItem}
+            sliderWidth={Dimensions.get("screen").width}
+            itemWidth={Dimensions.get("screen").width - 80}
+            autoplay={true}
+            autoplayDelay={1000}
+            autoplayInterval={3000}
+            loop={true}
+            enableSnap={true}
+          />
+        )}       
         <Text
           style={{
             color: Color.black,

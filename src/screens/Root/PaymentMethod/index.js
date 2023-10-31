@@ -24,11 +24,14 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Color } from "../../../constants/Colors";
 import { GloableStyle } from "../../GloableStyle";
-import { horizScale } from "../../../constants/Layout";
+import { days, getLocalDate, horizScale } from "../../../constants/Layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_END_POINT } from "../../../utils/ApiEndPoint";
 import RazorpayCheckout from "react-native-razorpay";
 import { WebView } from "react-native-webview";
+import { CustomImage } from "../../../constants/Images";
+import { fontSize } from "../../../constants/Fontsize";
+import { AppColor } from "../../../utils/AppColor";
 const PaymentMethod = ({ route, navigation }) => {
   const { orderdetail, selectedPlan, item, finaladdress } = route.params;
   const [modalOpen, setModalopen] = useState(false);
@@ -37,6 +40,341 @@ const PaymentMethod = ({ route, navigation }) => {
   const [cartTotal, setCartTotal] = useState("");
   const [data, setData] = useState([]);
   const [userInfo, setUserInfo] = useState({});
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [pIdForDel, setPIdForDel] = useState(null);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const removeFromCartFunc = () => {
+    // alert(pIdForDel);
+
+    let formdata = new FormData();
+    formdata.append("id", pIdForDel);
+
+    let requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow",
+    };
+
+    fetch(API_END_POINT.deleteCart, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        setIsModalVisible(false);
+        cartDataFunc();
+        if (result.response) {
+          ToastAndroid.showWithGravity(
+            "Item removed from cart",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM
+          );
+        }
+      })
+      .catch((error) => {
+        setIsModalVisible(false);
+        console.log("error", error);
+      })
+      .finally(() => {
+        setIsModalVisible(false);
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const cartItems = ({ item }) => {
+    return (
+      <View style={style.mainCardView}>
+      <View style={style.cartItemView}>
+        <Image source={{ uri: item.image }} style={style.cartImage} />
+        <View style={{ flex: 1 }}>
+          <Text style={style.proName}>{item.pname}</Text>
+          <Text style={style.price}>Price: ₹ {item.sale_cost}</Text>
+          <Text style={style.qty}>Qty: {item.prod_quantity}</Text>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity
+            style={style.cartBtn}
+            onPress={() => {
+              setIsModalVisible(true);
+              setPIdForDel(item.cartid);
+            }}
+          >
+            {
+              //   <TouchableOpacity
+              //   style={styles.button}
+              //   // disabled={item.prod_quantity <= 1}
+              //   onPress={() => {
+              //     if (item.prod_quantity == 1) {
+              //       // removeFromCartFunc(item.id);
+              //       setIsModalVisible(true);
+              //       setPIdForDel(item.cartid);
+              //     } else {
+              //       updateQuantity(
+              //         item.prod_id,
+              //         parseInt(item.prod_quantity) - 1
+              //       );
+              //     }
+              //   }}
+              // >
+              //   {item.prod_quantity !== 0 && (
+              //     <FontAwesome5 name="minus" size={15} color="red" />
+              //   )}
+              // </TouchableOpacity>
+            }
+            <Image
+              source={CustomImage.cancel}
+              style={{ height: horizScale(15), width: horizScale(15) }}
+            />
+            <Text
+              style={{
+                color: Color.black,
+                textAlign: "center",
+                fontSize: fontSize.medium,
+                fontWeight: "700",
+              }}
+            >
+              Remove
+            </Text>
+            {
+              //   <TouchableOpacity
+              //   style={styles.button}
+              //   onPress={() => {
+              //     updateQuantity(item.prod_id, parseInt(item.prod_quantity) + 1);
+              //   }}
+              // >
+              //   {item.prod_quantity !== 0 && (
+              //     <FontAwesome name="plus" size={15} color={Color.green} />
+              //   )}
+              // </TouchableOpacity>
+            }
+          </TouchableOpacity>
+          <Text style={style.totalPrice}>
+            {item.prod_quantity > 0
+              ? `Total price : ${item.sale_cost * item.prod_quantity}`
+              : null}
+          </Text>
+        </View>
+
+        
+      </View>
+
+
+
+{/* Show */}
+
+
+     {
+      item.plan == "A"  ?  <View>
+      <View style={style.datecontainer}>
+            <View style={style.datemsg}>
+              <View style={{ flex: 0.85 }}>
+                <View style={GloableStyle.rowtwoitem}>
+                  <Text style={{ width: horizScale(90) }}>Start From</Text>
+                  {/* <Text style={styles.date}>{getLocalDate(startDate)}</Text> */}
+                  <Text style={style.date}>{getLocalDate(item.date)}</Text>
+                </View>
+                {/* <View style={GloableStyle.rowtwoitem}>
+                  <Text style={{ width: horizScale(90) }}>To</Text>
+                  <Text style={styles.date}>{getLocalDate(item.date)}</Text>
+                </View> */}
+              </View>
+              <TouchableOpacity
+                style={{
+                  flex: 0.1,
+                  backgroundColor: Color.white1,
+                  alignItems: "center",
+                  padding: horizScale(8),
+                  borderRadius: horizScale(50),
+                }}
+                activeOpacity={0.8}
+                onPress={() => {
+                  // setCalenderModal(true);
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="calendar-edit"
+                  size={24}
+                  color={Color.green}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={style.datemsg}>
+              <View>
+                <Text style={style.date}>Price</Text>
+                <Text style={style.date}>{item.sale_cost}</Text>
+              </View>
+              <View>
+                <Text style={style.date}>*</Text>
+                <Text style={style.date}>*</Text>
+              </View>
+              <View>
+                <Text style={style.date}>Days</Text>
+                <Text style={style.date}>{item.days}</Text>
+              </View>
+              <View>
+                <Text style={style.date}>*</Text>
+                <Text style={style.date}>*</Text>
+              </View>
+              <View>
+                <Text style={style.date}>Quantity</Text>
+                <Text style={style.date}>{item.prod_quantity}</Text>
+              </View>
+              <View>
+                <Text style={style.date}>=</Text>
+                <Text style={style.date}>=</Text>
+              </View>
+              <View>
+                <Text style={style.date}>Amount</Text>
+                <Text style={style.date}>
+                    {item.sale_cost * item.prod_quantity * item.days }
+                </Text>
+              </View>
+            </View>
+          </View>
+      </View>:null
+     }
+
+
+
+
+
+     </View>
+    );
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // Payment gateway functions start
   const step1 = () => {
@@ -90,12 +428,13 @@ const PaymentMethod = ({ route, navigation }) => {
       })
       .catch((error) => {
         // handle failure
-        console.log(`Error: code ->
-         ${JSON.stringify(error.code)} |||||||||||||
-         desc->  ${JSON.stringify(error.description)}`);
-        alert(`Error: code ->
-         ${JSON.stringify(error.code)} |||||||||||||
-         desc->  ${JSON.stringify(error.description)}`);
+        // console.log(`Error: code ->
+        //  ${JSON.stringify(error.code)} |||||||||||||
+        //  desc->  ${JSON.stringify(error.description)}`);
+        // alert(`Error: code ->
+        //  ${JSON.stringify(error.code)} |||||||||||||
+        //  desc->  ${JSON.stringify(error.description)}`);
+        setModalopen(true);
       });
   };
   // Payment gateway functions end
@@ -117,6 +456,7 @@ const PaymentMethod = ({ route, navigation }) => {
       .then((result) => {
         setCartTotal(result.cart_total);
         setData(result.data);
+        console.log("Payment screen =======>",result.data)
       })
       .catch((error) => console.log("error", error));
   };
@@ -169,7 +509,7 @@ const PaymentMethod = ({ route, navigation }) => {
     fetch(API_END_POINT.addOrder, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
+        console.log("order successful = >",result);
         if (result.response) {
           setModalopen(true);
         }
@@ -208,8 +548,36 @@ const PaymentMethod = ({ route, navigation }) => {
   const renderOrderView = () => {
     return (
       <View style={{ flex: 1 }}>
+
+
+<View>
+<FlatList
+          data={data}
+          renderItem={cartItems}
+          keyExtractor={(item) => item.id}
+          ListEmptyComponent={() => {
+            return <Text >No items in the cart.</Text>;
+          }}
+        />
+</View>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         <View style={{ flex: 1, paddingVertical: 22 }}>
           {renderPaymentMethod()}
+         
         </View>
         {/* <View style={[style.coponView, style.shadow, style.rowVIew]}>
                     <Text style={[style.priceText, { color: "#7C798F" }]}>Coupon Code Applied</Text>
@@ -323,6 +691,38 @@ const PaymentMethod = ({ route, navigation }) => {
               ...style.tickIcon,
               tintColor:
                 selectedPaymentMethod == "UPI" ? Color.green1 : Color.gray,
+            }}
+            source={require("../../../../assets/images/tick-icn.png")}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            setselectedPaymentMethod("Wallet");
+          }}
+          style={{
+            flexDirection: "row",
+            width: "90%",
+            backgroundColor: Color.green3,
+            alignSelf: "center",
+            padding: horizScale(10),
+            borderRadius: horizScale(10),
+            elevation: 8,
+            marginTop: horizScale(20),
+          }}
+        >
+          {/* <Image
+            style={style.smallImage}
+            source={require("../../../../assets/images/upi.png")}
+          /> */}
+                  <Ionicons name="wallet-outline" size={20} color={Color.red} />
+          <Text style={[style.detailsText, { flex: 1, marginLeft:'6%' }]}>Wallet</Text>
+          <Image
+            style={{
+              ...style.tickIcon,
+              tintColor:
+                selectedPaymentMethod == "Wallet" ? Color.green1 : Color.gray,
             }}
             source={require("../../../../assets/images/tick-icn.png")}
           />
@@ -502,6 +902,81 @@ const PaymentMethod = ({ route, navigation }) => {
           {renderSendBtn()}
         </ScrollView>
         {renderModalVIew()}
+      </View>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <View>
+
+      <Modal
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => {
+          setIsModalVisible(false);
+        }}
+        animationType="slide"
+        statusBarTranslucent
+        // style={{ flexGrow: 1 }}
+      >
+        <View style={{ flex: 1, backgroundColor: "rgba(52,52,52,0.5)" }}>
+          <TouchableOpacity
+            onPress={() => {
+              setIsModalVisible(false);
+            }}
+            style={{
+              flex: 1,
+            }}
+          ></TouchableOpacity>
+          <View style={style.mainView}>
+            <Image source={CustomImage.orderFaild} style={style.modalImg} />
+            <Text style={style.modalText}>Remove Item From Cart ?</Text>
+            <Text style={style.modalDes}>
+              Are you really want to remove the item from the cart ?
+            </Text>
+            <View style={style.btnView}>
+              <TouchableOpacity
+                style={style.modalBtn}
+                onPress={() => {
+                  setIsModalVisible(false);
+                  setPIdForDel(null);
+                }}
+              >
+                <Image style={style.mdlBtnIcon} source={CustomImage.cancel} />
+                <Text style={style.btnText}>No</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={style.modalBtn}
+                onPress={() => {
+                  removeFromCartFunc();
+                }}
+              >
+                <Image style={style.mdlBtnIcon} source={CustomImage.right} />
+                <Text style={style.btnText}>Sure</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+         
+        </View>
+      </Modal>
+
+
+
+
+
+
+
       </View>
     </View>
   );
@@ -766,5 +1241,115 @@ const style = StyleSheet.create({
     padding: 14,
     overflow: "hidden",
     alignItems: "center",
+  },
+  datemsg: {
+    flexDirection: "row",
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    padding: horizScale(10),
+    width: "100%",
+  },
+  date: {
+    color: Color.black,
+    fontSize: fontSize.regular,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  datecontainer: {
+    backgroundColor: Color.green2,
+    borderRadius: horizScale(10),
+
+    marginHorizontal: horizScale(10),
+    elevation: 9,
+    // marginVertical: horizScale(20),
+  },
+  mainCardView:{
+    marginBottom: 40
+  },
+  cartItemView: {
+    backgroundColor: Color.green3,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginHorizontal: horizScale(10),
+    marginVertical: horizScale(5),
+    borderRadius: horizScale(10),
+    elevation: 5,
+  },
+  cartImage: {
+    height: horizScale(100),
+    width: horizScale(100),
+    margin: horizScale(10),
+    borderRadius: horizScale(7),
+  },
+  proName: {
+    color: Color.black,
+    fontWeight: "bold",
+  },
+  price: {
+    color: Color.green,
+    fontWeight: "600",
+  },
+  qty: {
+    color: Color.black,
+  },
+  cartBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    borderRadius: horizScale(8),
+    backgroundColor: AppColor.green2,
+    width: horizScale(90),
+    height: horizScale(35),
+  },
+  totalPrice: {
+    color: Color.black,
+    fontWeight: "600",
+    marginTop: horizScale(10),
+  },
+  mainView: {
+    height: "50%",
+    width: "100%",
+    position: "absolute",
+    backgroundColor: Color.white1,
+    borderRadius: horizScale(10),
+    padding: horizScale(20),
+    alignItems: "center",
+    justifyContent: "space-between",
+    bottom: horizScale(0),
+  },
+  modalImg: {
+    height: horizScale(200),
+    width: horizScale(200),
+  },
+  modalText: {
+    fontSize: fontSize.h5,
+    fontWeight: "600",
+  },
+  btnView: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+  },
+  modalBtn: {
+    backgroundColor: Color.green,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: horizScale(30),
+    paddingVertical: horizScale(15),
+    borderRadius: horizScale(20),
+  },
+  mdlBtnIcon: {
+    height: horizScale(20),
+    width: horizScale(20),
+    marginHorizontal: horizScale(5),
+  },
+  btnText: {
+    color: Color.white1,
+    fontSize: fontSize.medium,
+    fontWeight: "600",
+    marginHorizontal: horizScale(5),
   },
 });

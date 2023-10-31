@@ -193,5 +193,21 @@ const GloableStyle = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  headerView3: {
+    paddingVertical: horizScale(5),
+    paddingHorizontal: horizScale(5),
+    flexDirection: "row",
+    borderBottomRightRadius: horizScale(20),
+    borderBottomLeftRadius: horizScale(20),
+    elevation: 9,
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
+  backText1: {
+    marginLeft: horizScale(5),
+    color: AppColor.white,
+    fontSize: 18,
+    fontWeight: "600",
+  },
 });
 export { GloableStyle };

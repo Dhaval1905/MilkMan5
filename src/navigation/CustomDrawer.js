@@ -282,7 +282,7 @@ export default function CustomDrawer(props) {
               color={Color.green1}
             />
           )}
-          onPress={() => props.navigation.navigate("TabThree")}
+          onPress={() => props.navigation.navigate("Myy")}
         />
         <DrawerItem
           labelStyle={styles.labelStyle}

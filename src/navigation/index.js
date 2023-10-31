@@ -121,6 +121,13 @@ function RootNavigator() {
         component={AboutUs}
         options={{ headerShown: false }}
       />
+      
+      <Stack.Screen
+        name="Myy"
+        component={Demo}
+        options={{ headerShown: false }}
+      />
+
 
     </Stack.Navigator>
   );
@@ -175,6 +182,7 @@ import Support from "../screens/Root/ManuScreen/Support";
 import TermsCondition from "../screens/Root/ManuScreen/TermsCondition";
 import EnquiryForm from "../screens/Root/ManuScreen/EnquiryForm";
 import AboutUs from "../screens/Root/ManuScreen/AboutUs";
+import Demo from "../screens/Root/ManuScreen/Demo";
 
 const Drawer = createDrawerNavigator();
 
@@ -240,16 +248,17 @@ function BottomTabNavigator() {
       />
       <BottomTab.Screen
         name="TabThree"
-        component={Orders}
+        component={MyCart}
         options={{
+          
           unmountOnBlur: true,
-          title: "Orders",
+          title: "My Cart",
           tabBarIcon: ({ focused }) => (
             <Image
-              source={require("../../assets/images/milk.png")}
+              source={require("../../assets/images/imagecart.png")}
               style={{
-                height: 20,
-                width: 20,
+                height: 22,
+                width: 22,
                 tintColor: focused ? "green" : "gray",
               }}
             />

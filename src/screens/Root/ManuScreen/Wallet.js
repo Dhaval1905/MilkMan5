@@ -26,7 +26,7 @@ import { API_END_POINT } from "../../../utils/ApiEndPoint";
 
 const Wallet = ({ navigation }) => {
   const [rupey, setRupey] = useState();
-  const [walletData, setWalletData] = useState({});
+  const [walletData, setWalletData] = useState(0.00);
   const [modalOpen, setModalopen] = useState(false);
   const [isFailed, setIsfailed] = useState(false);
   const [selectedPaymentMethod, setselectedPaymentMethod] = useState("UPI");
@@ -46,10 +46,55 @@ const Wallet = ({ navigation }) => {
       redirect: "follow",
     };
 
-    fetch(API_END_POINT.wallet, requestOptions)
-      .then((response) => response.json())
-      .then((result) => setWalletData(result))
-      .catch((error) => console.log("error", error));
+  //   fetch(API_END_POINT.wallet, requestOptions)
+  //     .then((response) => response.json())
+  //     .then((result) => setWalletData(result))
+  //     .catch((error) => console.log("error", error));
+  // };
+  fetch(API_END_POINT.wallet, requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+     // Assuming 'result' contains the user's wallet data
+      // and 'productPrice' contains the price of the product
+      const userWalletBalance = result.balance;
+      const productPrice = productPrice // Replace with the actual product price
+
+      if (userWalletBalance >= productPrice) {
+        // Deduct the product price from the user's wallet
+        const newBalance = userWalletBalance - productPrice;
+
+        // Update the user's wallet balance locally
+        setWalletData({ ...result, balance: newBalance });
+
+        // You should also make an API call to update the backend with the new balance
+        updateWalletBalance(userId, newBalance);
+      } else {
+        console.log('Insufficient balance.');
+      }
+    })
+    .catch((error) => console.log("error", error));
+};
+
+// Function to update the wallet balance on the backend
+const updateWalletBalance = async (userId, newBalance) => {
+  let formdata = new FormData();
+  formdata.append("user_id", userId);
+  formdata.append("new_balance", newBalance);
+
+  let requestOptions = {
+    method: "POST",
+    body: formdata,
+    redirect: "follow",
+  };
+
+  fetch(API_END_POINT.updateWallet, requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      console.log('Wallet balance updated on the backend:', result);
+    })
+    .catch((error) => console.log("error", error));
+
+
   };
 
   useEffect(() => {
@@ -235,7 +280,7 @@ const Wallet = ({ navigation }) => {
             marginRight: horizScale(20),
           }}
         >
-          ₹ {walletData.img}
+          ₹ {walletData}
         </Text>
       </View>
 

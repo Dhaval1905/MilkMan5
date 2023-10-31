@@ -163,6 +163,7 @@ const Orders = ({ navigation }) => {
       .then((result) => {
         setLoader(false);
         setOrder(result.data);
+        // console.log('result============',result)
       })
       .catch((error) => {
         setLoader(false);
@@ -284,6 +285,7 @@ const Orders = ({ navigation }) => {
                     <Text style={GloableStyle.simpleText}>
                       {item.status == "Active" ? "Start from :" : "Order on :"}{" "}
                       {getLocalDate(item.delivery_date)}
+
                     </Text>
                   </View>
                   <TouchableOpacity

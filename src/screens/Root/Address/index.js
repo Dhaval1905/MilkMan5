@@ -22,7 +22,9 @@ import * as Location from "expo-location";
 const Address = ({ navigation, route }) => {
   const [googleLocation, setGoogleLocation] = useState("");
   const { item, selectedPlan, orderdetail } = route.params;
+  console.log("Address Screen route.params",route.params)
   const [userDetails, setUserDetails] = useState({});
+  
   const [first, setfirst] = useState("");
   const [second, setsecond] = useState("");
   const [city, setcity] = useState("");
@@ -91,8 +93,23 @@ const Address = ({ navigation, route }) => {
     getLiveAddress();
   }, [locationObj]);
 
+  // let requestOptions = {
+  //   method: "get",
+  //   // body: formdata,
+  //   // redirect: "follow",
+  // };
+  // const Apifetch=()=>{
+  //   let result = fetch("https://www.samajutkarsh.com/Milk_Man1/api/user/addcart",
+  //   requestOptions)
+  //   .then((response)=>response.json())
+  //   .then((result)=>{
+  //     console.log(result)
+  //   })
+  // }
+
   return (
     <SafeAreaView style={GloableStyle.container}>
+       {/* <Text onPress={Apifetch}>adsghadjsghjdsa</Text> */}
       <TouchableOpacity
         onPress={() => {
           navigation.goBack();
